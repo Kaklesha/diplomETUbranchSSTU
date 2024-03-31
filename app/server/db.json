@@ -1,0 +1,90 @@
+{
+    "goods":[
+    {
+    "id": 1,
+    "name": "username",
+    "categories" : [
+        {   
+
+            "id": 1,
+            "cname" : "Дом",
+            "tasks" : [
+                {   "id": 1,
+                    "task" : "Приготовить вкусный ужин",
+                    "isComplete" : false,
+                    "created" : "2012-04-23T18:25:43.511Z",
+                    "finished" : ""
+                },
+                {   "id": 2,
+                    "task" : "Полить цветы",
+                    "isComplete" : true,
+                    "created" : "2012-04-23T18:25:43.511Z",
+                    "finished" : "2012-04-25T18:25:43.511Z"
+                },
+                {   "id": 3,
+                    "task" : "Вызвать сантехника",
+                    "isComplete" : true,
+                    "created" : "2012-04-23T18:25:43.511Z",
+                    "finished" : "2012-04-25T18:25:43.511Z"
+                },
+                {   "id": 4,
+                    "task" : "Стирка белого белья",
+                    "isComplete" : false,
+                    "created" : "2012-04-23T18:25:43.511Z",
+                    "finished" : ""
+                },
+                {   "id": 5,
+                    "task" : "Разморозить холодильник",
+                    "isComplete" : false,
+                    "created" : "2012-04-23T18:25:43.511Z",
+                    "finished" : ""
+                },
+                {   "id": 6,
+                "task" : "Устранить засор в раковине",
+                "isComplete" : false,
+                "created" : "2012-04-23T18:25:43.511Z",
+                "finished" : ""
+                }
+            ]
+        }
+        ,
+        {   
+
+            "id": 2,
+            "cname" : "Семья",
+            "tasks" : [
+                
+            ]
+        }
+        ,
+        {   
+
+            "id": 3,
+            "cname" : "Работа",
+            "tasks" : [
+                
+            ]
+        }
+        ,
+        {   
+
+            "id": 4,
+            "cname" : "Спорт",
+            "tasks" : [
+                
+            ]
+        }
+        ]
+    },
+    {
+        "id":2,
+        "name": "Milk",
+        "categories" : []
+    },
+    {
+        "id":3,
+        "name": "bananas",
+        "categories" : []
+    }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "your-library-name",
+  "version": "1.0.0",
+  "description": "Your UI library description",
+  "main": "dist/your-library-name.js",
+  "module": "dist/your-library-name.js",
+  "typings": "dist/your-library-name.d.ts",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "webpack --config webpack.config.js",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "babel-loader": "^8.0.0",
+    "babel-preset-react": "^7.0.0"
+  }
+}

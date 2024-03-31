@@ -1,0 +1,16 @@
+.language-selector {
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #999999;
+    border-radius: 50px;
+    width: 25px;
+    height: 25px;
+    box-sizing: border-box;
+}
+
+.language-selector img {
+    width: 23px;
+    height: 23px;
+    border-radius: 50px;
+}
