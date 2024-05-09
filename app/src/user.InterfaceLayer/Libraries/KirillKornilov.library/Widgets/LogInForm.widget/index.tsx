@@ -1,5 +1,8 @@
-import React, { useState, FC } from "react";
-//import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState, FC } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authSlice";
+import { useLoginMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authApiSlice";
 
 import Button from "../../UI_KIT/Molecules/Button.molecule";
 import Media from "../../UI_KIT/Atoms/Media.Atom";
@@ -15,38 +18,78 @@ interface ILogInFormType {
 	usePostAuthMutation: any;
 }
 
-export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
+export const LogInForm: FC<ILogInFormType> = () => {
 	//const navigate = useNavigate();
-	const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
-	const [valuePass, setValuePass] = useState("rlytoughpass");
+	const userRef = useRef<HTMLInputElement>(null);
+	const errRef = useRef<HTMLInputElement>(null);
+	const [user, setUser] = useState("emily25@gmail.com");
+	const [pwd, setPwd] = useState("rlytoughpass");
+	const [errMsg, setErrMsg] = useState("");
+	const navigate = useNavigate();
 
-	const [postAuth, result] = usePostAuthMutation();
+	const [login, { isLoading }] = useLoginMutation();
+	const dispatch = useDispatch();
 
-	const onClickHandler = async () => {
-		const body = { email: valueEmail, password: valuePass };
-		await postAuth(body);
+	useEffect(() => {
+		userRef.current.focus();
+	}, []);
+	useEffect(() => {
+		setUser("");
+	}, [user, pwd]);
+
+	const handlerSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			const userData = await login({ user, pwd }).unwrap();
+			dispatch(setCredentials({ ...userData, user }));
+			setUser("");
+			setPwd("");
+			navigate("/sign");
+		} catch (err: unknown) {
+			
+			// switch (err) {
+			// 	case err.response?.status === 400:
+			// 		setErrMsg("No Server Response");
+			// 		break;
+
+			// 	default:
+			// 		break;
+			// }
+
+			if (!err?.response) {
+				setErrMsg("No Server Response");
+			} else if (err.response?.status === 400) {
+				setErrMsg("No Server Response");
+			}
+		}
 	};
+	// const [postAuth, result] = usePostAuthMutation();
 
-	// eslint-disable-next-line no-console
-	console.log(`isLoad ${result.isLoading}`);
-	// eslint-disable-next-line no-console
-	console.log(`isData ${result.data}`);
-	// eslint-disable-next-line no-console
-	console.log(result.error);
+	// const onClickHandler = async () => {
+	// 	const body = { email: valueEmail, password: valuePass };
+	// 	await postAuth(body);
+	// };
+
+	// // eslint-disable-next-line no-console
+	// console.log(`isLoad ${result.isLoading}`);
+	// // eslint-disable-next-line no-console
+	// console.log(`isData ${result.data}`);
+	// // eslint-disable-next-line no-console
+	// console.log(result.error);
 
 	return (
 		<S.container>
 			<S.wrapper>
 				<h4>Вход в аккаунт</h4>
 				<input
-					value={valueEmail}
-					onChange={(e) => setValueEmail(e.target.value)}
+					value={user}
+					onChange={(e) => setUser(e.target.value)}
 					type="text"
 					placeholder="E-mail"
 				/>
 				<input
-					value={valuePass}
-					onChange={(e) => setValuePass(e.target.value)}
+					value={pwd}
+					onChange={(e) => setPwd(e.target.value)}
 					type="text"
 					placeholder="Пароль"
 				/>
@@ -55,7 +98,7 @@ export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
 				 */}
 
 				<Button
-					onClick={() => onClickHandler()}
+					//onClick={() => onClickHandler()}
 					text="Войти"
 					color="#29A19C"
 					icon={false}
