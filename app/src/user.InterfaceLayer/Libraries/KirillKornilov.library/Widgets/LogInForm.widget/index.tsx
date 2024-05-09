@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authSlice";
 import { useLoginMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authApiSlice";
+import React, { useEffect, useRef, useState, FC } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authSlice";
+import { useLoginMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/auth.entity/redux/slice/authApiSlice";
 
 import Button from "../../UI_KIT/Molecules/Button.molecule";
 import Media from "../../UI_KIT/Atoms/Media.Atom";
@@ -19,6 +24,7 @@ interface ILogInFormType {
 	usePostAuthMutation: any;
 }
 
+export const LogInForm: FC<ILogInFormType> = () => {
 export const LogInForm: FC<ILogInFormType> = () => {
 	//const navigate = useNavigate();
 	const userRef = useRef<HTMLInputElement>(null);
@@ -76,7 +82,17 @@ export const LogInForm: FC<ILogInFormType> = () => {
 	// 	const body = { email: valueEmail, password: valuePass };
 	// 	await postAuth(body);
 	// };
+	// const onClickHandler = async () => {
+	// 	const body = { email: valueEmail, password: valuePass };
+	// 	await postAuth(body);
+	// };
 
+	// // eslint-disable-next-line no-console
+	// console.log(`isLoad ${result.isLoading}`);
+	// // eslint-disable-next-line no-console
+	// console.log(`isData ${result.data}`);
+	// // eslint-disable-next-line no-console
+	// console.log(result.error);
 	// // eslint-disable-next-line no-console
 	// console.log(`isLoad ${result.isLoading}`);
 	// // eslint-disable-next-line no-console
@@ -91,10 +107,14 @@ export const LogInForm: FC<ILogInFormType> = () => {
 				<input
 					value={user}
 					onChange={(e) => setUser(e.target.value)}
+					value={user}
+					onChange={(e) => setUser(e.target.value)}
 					type="text"
 					placeholder="E-mail"
 				/>
 				<input
+					value={pwd}
+					onChange={(e) => setPwd(e.target.value)}
 					value={pwd}
 					onChange={(e) => setPwd(e.target.value)}
 					type="text"
@@ -105,6 +125,7 @@ export const LogInForm: FC<ILogInFormType> = () => {
 				 */}
 
 				<Button
+					//onClick={() => onClickHandler()}
 					//onClick={() => onClickHandler()}
 					text="Войти"
 					color="#29A19C"
