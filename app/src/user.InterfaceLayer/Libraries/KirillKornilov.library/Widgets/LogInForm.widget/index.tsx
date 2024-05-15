@@ -1,9 +1,12 @@
 import React, { useState, FC } from "react";
 //import { useNavigate } from "react-router-dom";
 
+import { usePostAuthMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
+
 import Button from "../../UI_KIT/Molecules/Button.molecule";
 import Media from "../../UI_KIT/Atoms/Media.Atom";
 import * as S from "./styled";
+import axios from "axios";
 //import "./styled/style.css";
 
 // const Widget1: FunctionComponent<Widget1Type> = ({ useGetTodoQuery }) => {
@@ -15,24 +18,41 @@ interface ILogInFormType {
 	usePostAuthMutation: any;
 }
 
-export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
+export const LogInForm: FC<ILogInFormType> = () => {
 	//const navigate = useNavigate();
 	const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
 	const [valuePass, setValuePass] = useState("rlytoughpass");
 
-	const [postAuth, result] = usePostAuthMutation();
-
+	//const [postAuth, result] = usePostAuthMutation();
+	const headers = {
+		"Content-Type": "text/plain",
+	};
 	const onClickHandler = async () => {
-		const body = { email: valueEmail, password: valuePass };
-		await postAuth(body);
+		//const body = { email: valueEmail, password: valuePass };
+
+		await axios
+			.post("http://localhost:9000/api/userAuth", {
+				email: `${valueEmail}`,
+				password: `${valuePass}`,
+			},{headers})
+			.then(function (response) {
+				// eslint-disable-next-line no-console
+				console.log(response);
+			})
+			.catch(function (error) {
+				// eslint-disable-next-line no-console
+				console.log(error);
+			});
+		//await postAuth(body);
 	};
 
-	// eslint-disable-next-line no-console
-	console.log(`isLoad ${result.isLoading}`);
-	// eslint-disable-next-line no-console
-	console.log(`isData ${result.data}`);
-	// eslint-disable-next-line no-console
-	console.log(result.error);
+	// // eslint-disable-next-line no-console
+	// console.log(`isLoad ${result.isLoading}`);
+	// // eslint-disable-next-line no-console
+	// console.log(`isData ${result.data}`);
+	// // eslint-disable-next-line no-console
+	// console.dir(`isRes ${JSON.stringify(result)}`);
+	// // eslint-disable-next-line no-console
 
 	return (
 		<S.container>
@@ -69,7 +89,7 @@ export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
 					<p>или</p>
 					<hr />
 				</S.division_box>
-				<S.media_box>
+				{/* <S.media_box>
 					<Media
 						logo={require("../../assets/icons/twitter.png")}
 						link="twitter.com"
@@ -78,7 +98,7 @@ export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
 						logo={require("../../assets/icons/facebook.webp")}
 						link="facebook.com"
 					/>
-				</S.media_box>
+				</S.media_box> */}
 			</S.wrapper>
 		</S.container>
 	);
