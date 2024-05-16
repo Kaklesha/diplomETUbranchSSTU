@@ -1,9 +1,12 @@
 import React, { FunctionComponent, useContext } from "react";
 import { UserIdContext } from "user.InterfaceLayer/Components/KirillKornilov.components.bll/MainPage.component.bll copy";
 import { useTranslation } from "react-i18next";
-import {Link} from "react-router-dom";
+// eslint-disable-next-line import/order
+import { Link } from "react-router-dom";
 
 import "../i18n.widget/i18n";
+import { removeLocalStorage } from "business.InterfaceLayer/store/services/utils/localstoreUser/localstore";
+
 import Logo from "../../UI_KIT/Molecules/Logo.molecule";
 import { Icons } from "../../UI_KIT/Atoms/Atom1/icons";
 import SidebarDataItem from "../../UI_KIT/Molecules/SidebarDataItem.molecule";
@@ -28,19 +31,18 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 
 	const userCategory = useContext(UserCategory);
 
-    const [deleteCategory]=useDeleteCategoryMutation();
+	const [deleteCategory] = useDeleteCategoryMutation();
 
-    const handleDeleteCategory=  async (category_id:number)=>{
-		const putUserCategory=userCategory;
-        await deleteCategory(category_id);
-		if(putUserCategory==category_id){setCategory(1);}
-		else setCategory(putUserCategory);
-		
-    };
+	const handleDeleteCategory = async (category_id: number) => {
+		const putUserCategory = userCategory;
+		await deleteCategory(category_id);
+		if (putUserCategory == category_id) {
+			setCategory(1);
+		} else setCategory(putUserCategory);
+	};
 
 	const { data, isLoading } = useGetCategoriesQuery(userId);
 	if (isLoading) return <h1>isLoading</h1>;
-
 
 	return (
 		<S.side_bar_box>
@@ -103,7 +105,9 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 								onClick={() => setCategory(user["id"])}
 							>
 								<SidebarDataItem
-                                    onDelete={()=>{handleDeleteCategory(Number(user["id"]));}}
+									onDelete={() => {
+										handleDeleteCategory(Number(user["id"]));
+									}}
 									text={user["name"]}
 									color="#000"
 									icon={Icons.Star}
@@ -122,20 +126,22 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 					</div>
 				</S.data_items>
 			</>
-	{/* useDeleteCategoryMutation={useDeleteCategoryMutation} */}
-			
-			<S.exit>
-				<Link to="/kirillKornilov/sign" >  
-				<SidebarDataItem
-					text={t("sidebar.exit")}
-					color="#000"
-					icon={Icons.Exit}
-					active={false}
+			{/* useDeleteCategoryMutation={useDeleteCategoryMutation} */}
 
-				/>
-					</Link>
+			<S.exit
+				onClick={() => {
+					removeLocalStorage("user");
+				}}
+			>
+				<Link to="/kirillKornilov/sign">
+					<SidebarDataItem
+						text={t("sidebar.exit")}
+						color="#000"
+						icon={Icons.Exit}
+						active={false}
+					/>
+				</Link>
 			</S.exit>
-		
 		</S.side_bar_box>
 	);
 };

@@ -1,12 +1,14 @@
-import React, { useState, FC } from "react";
+// eslint-disable-next-line import/order
+import { useState, FC } from "react";
 //import { useNavigate } from "react-router-dom";
 
-import { usePostAuthMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
+//import { usePostAuthMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
+
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import Button from "../../UI_KIT/Molecules/Button.molecule";
-import Media from "../../UI_KIT/Atoms/Media.Atom";
 import * as S from "./styled";
-import axios from "axios";
 //import "./styled/style.css";
 
 // const Widget1: FunctionComponent<Widget1Type> = ({ useGetTodoQuery }) => {
@@ -19,6 +21,7 @@ interface ILogInFormType {
 }
 
 export const LogInForm: FC<ILogInFormType> = () => {
+	const navigate: NavigateFunction = useNavigate();
 	//const navigate = useNavigate();
 	const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
 	const [valuePass, setValuePass] = useState("rlytoughpass");
@@ -31,13 +34,26 @@ export const LogInForm: FC<ILogInFormType> = () => {
 		//const body = { email: valueEmail, password: valuePass };
 
 		await axios
-			.post("http://localhost:9000/api/userAuth", {
-				email: `${valueEmail}`,
-				password: `${valuePass}`,
-			},{headers})
+			.post(
+				"http://localhost:9000/api/userAuth",
+				{
+					email: `${valueEmail}`,
+					password: `${valuePass}`,
+				},
+				{ headers }
+			)
 			.then(function (response) {
 				// eslint-disable-next-line no-console
 				console.log(response);
+				if (response.data["id"] !== 0) {
+					localStorage.setItem("user", JSON.stringify(response.data));
+					// eslint-disable-next-line no-console
+					console.log("good");
+					// eslint-disable-next-line no-console
+					console.log(response["id"]);
+				navigate("..", { relative: "path" });
+				window.location.reload();
+				}
 			})
 			.catch(function (error) {
 				// eslint-disable-next-line no-console
