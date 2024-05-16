@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider  } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { store } from "./business.InterfaceLayer/store";

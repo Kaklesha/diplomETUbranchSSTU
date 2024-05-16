@@ -33,30 +33,6 @@ function UserCheck(callback) {
 		return true;
 	}
 
-	// setTimeout(() => {
-	// 	navigate("/sign", { replace: false });
-	// 	window.location.reload();
-	// },1000);
-	//navigate("/sign", { relative: "path" });
-	//window.location.reload();
-	// useEffect(() => {
-	// 	navigate("/sign", { replace: false });
-	// 	window.location.reload();
-	// }, []);
-	// useEffect(() => {
-	// 	//navigate(window.origin + location.pathname);
-	// 	//	navigate("sign/", { relative: "path" });
-	// 	navigate("/sign");
-	// 	//	window.location.reload();
-	// }, []);
-
-	// useEffect(() => {
-	// 	if (userIsInactive) {
-	// 	  fake.logout();
-	// 	  navigate("/session-timed-out");
-	// 	}
-	//   }, [userIsInactive]);
-
 	return false;
 }
 const ComponentMainPage = () => {
