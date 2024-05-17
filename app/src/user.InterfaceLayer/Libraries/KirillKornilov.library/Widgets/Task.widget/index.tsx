@@ -21,7 +21,7 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 	// const { useGetTodoQuery } = props;
 	//const {query}
 	const {t} =useTranslation();
-	
+		// eslint-disable-next-line no-console
 	const [toggleTask] = useToggleTaskMutation();
 	const category_id =useContext(UserCategory);
 	const { data, isLoading } = useGetTasksQuery({

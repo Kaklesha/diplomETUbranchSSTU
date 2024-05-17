@@ -6,8 +6,8 @@ import MainWidgetType from "./type";
 import SidebarDataWidget from "../SideBarData.widget";
 import HeaderMainWidget from "../HeaderMain.widget";
 import Card from "../../UI_KIT/Atoms/Card.Atom";
-import CardDataOptions from "../../UI_KIT/Molecules/CardDataOptions.molecule";
-import Activity from "../../UI_KIT/Molecules/Activity.molecule";
+// import CardDataOptions from "../../UI_KIT/Molecules/CardDataOptions.molecule";
+// import Activity from "../../UI_KIT/Molecules/Activity.molecule";
 import TaskWidget from "../Task.widget";
 import CardData from "../../UI_KIT/Atoms/CardData.Atom";
 import DateTime from "../../UI_KIT/Molecules/DateTime.molecule";
@@ -91,11 +91,11 @@ const MainWidget: FunctionComponent<MainWidgetType> = ({
 							</S.container_hide>
 
 							<S.container_hide hide={visibleProfile ? "none" : "flex"}>
-								<Card>
+								{/* <Card>
 									<CardDataOptions title={t("weekAchievements.title")}>
 										<Activity useGetActivityQuery={useGetActivityQuery} />
 									</CardDataOptions>
-								</Card>
+								</Card> */}
 
 								<Card>
 									<TaskWidget

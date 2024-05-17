@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import MainWidget from "user.InterfaceLayer/Libraries/KirillKornilov.library/Widgets/Main.widget";
 import { useGetGoodsQuery } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
 import { useGetTodoQuery } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/todo.entity/redux/api";
@@ -19,29 +19,45 @@ import { Link } from "react-router-dom";
 
 import * as S from "./styled";
 
-export const UserIdContext = createContext(1);
+export const UserIdContext = createContext(2);
 
 //const UserIdContext = createContext(1);
-function UserCheck(callback) {
-	//localStorage.getItem("user");
-	//if localStorage.getItem("user")
-	//	const navigate: NavigateFunction = useNavigate();
-	//const navigate: NavigateFunction = useNavigate();
-	if (getLocalStorage("user")) {
-		() => callback(getLocalStorage("user")["id"]);
+// function UserCheck(callback) {
+// 	// eslint-disable-next-line no-console
+// 	//	console.log( getLocalStorage("user")["id"]);
+// 	//localStorage.getItem("user");
+// 	//if localStorage.getItem("user")
+// 	//	const navigate: NavigateFunction = useNavigate();
+// 	//const navigate: NavigateFunction = useNavigate();
+// 	if (getLocalStorage("user")) {
+// 		() => callback(getLocalStorage("user")["id"]);
 
-		return true;
-	}
+// 		return true;
+// 	}
 
-	return false;
-}
+// 	return false;
+// }
 const ComponentMainPage = () => {
 	//	const [UserIdContext, setUserIdContext] = useState(1);
-	const [currentUser, setCurrentUser] = useState(2);
+
+	const [valued, setValued] = useState(false);
+
+	const [currentUser, setCurrentUser] = useState(1);
+
+	useEffect(() => {
+		if (getLocalStorage("user")) {
+			setCurrentUser(getLocalStorage("user")["id"]);
+
+			setValued(true);
+		} else {
+			setValued(false);
+		}
+	}, []);
+
 	//localStorage.getItem("user");
 	//, JSON.stringify(response.data)
 
-	const Content = UserCheck(setCurrentUser) ? (
+	const Content = valued ? (
 		<>
 			<UserIdContext.Provider value={currentUser}>
 				<MainWidget
@@ -64,8 +80,6 @@ const ComponentMainPage = () => {
 		</>
 	) : (
 		<>
-			
-
 			<S.container>
 				<S.wrapper>
 					<h4>Уведомление</h4>

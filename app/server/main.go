@@ -709,8 +709,14 @@ func GetActivity(w http.ResponseWriter, r *http.Request) {
 	// if err != nil {
 	// 	panic(err)
 	// }
+	var active = Activity{}
 
-	json.NewEncoder(w).Encode(acitvity[user_id-1])
+	if user_id > 2 {
+		json.NewEncoder(w).Encode(active)
+	} else {
+		json.NewEncoder(w).Encode(acitvity[user_id-1])
+	}
+
 }
 
 func GetFact(w http.ResponseWriter, r *http.Request) {
@@ -778,23 +784,32 @@ func GetObservation(w http.ResponseWriter, r *http.Request) {
 	completedMax := 0
 	completedMaxIndex := 0
 
-	for i := 0; i < len(acitvity[user_id-1].Created); i++ {
-		if acitvity[user_id-1].Created[i] > createdMax {
-			createdMax = acitvity[user_id-1].Created[i]
-			createdMaxIndex = i
+	if user_id > 2 {
+		obsr := Observation{
+			Created:   "Больше всего задач вы создаете в " + "Понедельник",
+			Completed: "Больше всего задач вы завершаете в " + "Понедельник",
 		}
-		if acitvity[user_id-1].Completed[i] > completedMax {
-			completedMax = acitvity[user_id-1].Completed[i]
-			completedMaxIndex = i
+		json.NewEncoder(w).Encode(obsr)
+	} else {
+		for i := 0; i < len(acitvity[user_id-1].Created); i++ {
+			if acitvity[user_id-1].Created[i] > createdMax {
+				createdMax = acitvity[user_id-1].Created[i]
+				createdMaxIndex = i
+			}
+			if acitvity[user_id-1].Completed[i] > completedMax {
+				completedMax = acitvity[user_id-1].Completed[i]
+				completedMaxIndex = i
+			}
 		}
+
+		obsr := Observation{
+			Created:   "Больше всего задач вы создаете в " + days[createdMaxIndex],
+			Completed: "Больше всего задач вы завершаете в " + days[completedMaxIndex],
+		}
+
+		json.NewEncoder(w).Encode(obsr)
 	}
 
-	obsr := Observation{
-		Created:   "Больше всего задач вы создаете в " + days[createdMaxIndex],
-		Completed: "Больше всего задач вы завершаете в " + days[completedMaxIndex],
-	}
-
-	json.NewEncoder(w).Encode(obsr)
 }
 
 // Everything related for getting categories
