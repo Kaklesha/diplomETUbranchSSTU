@@ -8,7 +8,7 @@ display: flex;
 align-items: center;
 
 & p{
-    margin: 5px 73px 5px 10px;
+    margin: 5px auto 5px 10px;
     font-weight: 600;
     color: var(--unamed, #29A19C);
     font-family: Montserrat;

@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import Button from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Molecules/Button.molecule";
-import {
-	Icons,
-	Icon,
-} from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Atoms/Atom1/icons";
+// import {
+// 	Icons,
+// 	Icon,
+// } from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Atoms/Atom1/icons";
 //import Avatar from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Atoms/Avatar.Atom";
 // eslint-disable-next-line import/order
 import { useTranslation } from "react-i18next";
@@ -47,7 +47,7 @@ const HeaderMainWidget: FunctionComponent<HeaderMainType> = ({
 					onClick={() => setVisible(true)}
 				/>
 			</S.container_hide>
-
+{/* 
 			<S.theme_button>
 				<Icon
 					width={24}
@@ -55,7 +55,7 @@ const HeaderMainWidget: FunctionComponent<HeaderMainType> = ({
 					color="#bbbcb9"
 					icon={Icons.Moon}
 				/>
-			</S.theme_button>
+			</S.theme_button> */}
 			<S.user_card>
 				<LanguageSelectorMolecule />
 				<p>
