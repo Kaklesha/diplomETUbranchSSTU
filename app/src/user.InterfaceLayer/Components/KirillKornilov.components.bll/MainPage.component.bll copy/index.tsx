@@ -15,7 +15,7 @@ import { useEditTaskMutation } from "business.InterfaceLayer/store/shared/entiti
 import { usePostCategoryMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
 import { useDeleteCategoryMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
 import { getLocalStorage } from "business.InterfaceLayer/store/services/utils/localstoreUser/localstore";
-import { Link } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 import * as S from "./styled";
 
@@ -28,7 +28,7 @@ export const UserIdContext = createContext(2);
 // 	//localStorage.getItem("user");
 // 	//if localStorage.getItem("user")
 // 	//	const navigate: NavigateFunction = useNavigate();
-// 	//const navigate: NavigateFunction = useNavigate();
+
 // 	if (getLocalStorage("user")) {
 // 		() => callback(getLocalStorage("user")["id"]);
 
@@ -38,6 +38,8 @@ export const UserIdContext = createContext(2);
 // 	return false;
 // }
 const ComponentMainPage = () => {
+
+	const navigate: NavigateFunction = useNavigate();
 	//	const [UserIdContext, setUserIdContext] = useState(1);
 
 	const [valued, setValued] = useState(false);
@@ -51,6 +53,7 @@ const ComponentMainPage = () => {
 			setValued(true);
 		} else {
 			setValued(false);
+			navigate("/kirillKornilov/sign");
 		}
 	}, []);
 

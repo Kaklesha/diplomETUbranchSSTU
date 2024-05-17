@@ -12,22 +12,11 @@ import Logo from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Mo
 import "./style.css";
 import Button from "user.InterfaceLayer/Libraries/KirillKornilov.library/UI_KIT/Molecules/Button.molecule";
 import axios from "axios";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 import * as S from "./styled";
 
-//import Component1 from "../../../Components/KirillKornilov.components.bll/Components1.component.bll";
-// import { Component1 } from "test-lib";
-
-// const headers = {
-// 	"Content-Type": "text/plain",
-// };
-
-// const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
-// const [valuePass, setValuePass] = useState("rlytoughpass");
-
 const onClickHandler = async (valueEmail, valuePass, valuePassTemp) => {
-	//const body = { email: valueEmail, password: valuePass };
-
 	if (valuePass !== valuePassTemp) return false;
 	const headers = {
 		"Content-Type": "text/plain",
@@ -45,15 +34,6 @@ const onClickHandler = async (valueEmail, valuePass, valuePassTemp) => {
 		.then(function (response) {
 			// eslint-disable-next-line no-console
 			console.log(response);
-			// if (response.data["id"] !== 0) {
-			// 	localStorage.setItem("user", JSON.stringify(response.data));
-			// 	// eslint-disable-next-line no-console
-			// 	console.log("good");
-			// 	// eslint-disable-next-line no-console
-			// 	console.log(response["id"]);
-			// 	//	navigate("..", { relative: "path" });
-			// 	//	window.location.reload();
-			// }
 		})
 		.catch(function (error) {
 			// eslint-disable-next-line no-console
@@ -63,9 +43,8 @@ const onClickHandler = async (valueEmail, valuePass, valuePassTemp) => {
 };
 
 const RegisterPage: FC = () => {
+	const navigate: NavigateFunction = useNavigate();
 	// eslint-disable-next-line no-console
-	// console.log(Component1);
-
 	const [valueEmail, setValueEmail] = useState("@gmail.com");
 	const [valuePass, setValuePass] = useState("");
 	const [valuePassTemp, setValuePassTemp] = useState("");
@@ -106,7 +85,6 @@ const RegisterPage: FC = () => {
 					</g>
 				</svg>
 			</S.head>
-
 			<S.container>
 				<S.wrapper>
 					<h4>Регистрация аккаунта</h4>
@@ -128,19 +106,25 @@ const RegisterPage: FC = () => {
 						type="text"
 						placeholder="Повтор пароля"
 					/>
-
-					{/* <Button onClick={()=>window.open("/kirillKornilov/")} text="Войти" color="#29A19C" icon={false}/>
-					 */}
-
 					<Button
 						onClick={() => onClickHandler(valueEmail, valuePass, valuePassTemp)}
 						text="Войти"
 						color="#29A19C"
 						icon={false}
 					/>
+					<Button
+						onClick={() => {
+							navigate("/kirillkornilov/sign");
+						}}
+						text="Назад"
+						color="#29A19C"
+						icon={false}
+					/>
+					{/* <S.button>
+						<Link to="/kirillKornilov/register" >Назыд</Link>
+					</S.button> */}
 				</S.wrapper>
 			</S.container>
-
 			<S.Footer>
 				<S.Copyright>
 					<svg

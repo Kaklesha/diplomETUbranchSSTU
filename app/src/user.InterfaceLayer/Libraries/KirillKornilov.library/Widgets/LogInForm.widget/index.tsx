@@ -4,7 +4,7 @@ import { useState, FC } from "react";
 
 //import { usePostAuthMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
 
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import Button from "../../UI_KIT/Molecules/Button.molecule";
@@ -98,23 +98,9 @@ export const LogInForm: FC<ILogInFormType> = () => {
 				/>
 
 				<p>
-					Ещё нет аккаунта? <a href="#">Регистрация</a>
+					Ещё нет аккаунта? <Link to="/kirillKornilov/register">регистрация / Sign Up</Link>
 				</p>
-				<S.division_box>
-					<hr />
-					<p>или</p>
-					<hr />
-				</S.division_box>
-				{/* <S.media_box>
-					<Media
-						logo={require("../../assets/icons/twitter.png")}
-						link="twitter.com"
-					/>
-					<Media
-						logo={require("../../assets/icons/facebook.webp")}
-						link="facebook.com"
-					/>
-				</S.media_box> */}
+			
 			</S.wrapper>
 		</S.container>
 	);
