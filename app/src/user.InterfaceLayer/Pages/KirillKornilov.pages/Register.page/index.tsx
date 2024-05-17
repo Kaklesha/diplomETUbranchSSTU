@@ -35,7 +35,7 @@ const onClickHandler = async (valueEmail, valuePass, valuePassTemp) => {
 
 	await axios
 		.post(
-			"http://localhost:9000/api/userPostAuth",
+			"http://localhost:9000/api/userCreate",
 			{
 				email: `${valueEmail}`,
 				password: `${valuePass}`,
