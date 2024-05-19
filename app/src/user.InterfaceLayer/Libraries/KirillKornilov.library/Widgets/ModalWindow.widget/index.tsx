@@ -1,5 +1,10 @@
 /* eslint-disable max-lines */
-import React, { FunctionComponent, useContext, useState,useEffect } from "react";
+import React, {
+	FunctionComponent,
+	useContext,
+	useState,
+	useEffect,
+} from "react";
 import { UserIdContext } from "user.InterfaceLayer/Components/KirillKornilov.components.bll/MainPage.component.bll copy";
 
 import Button from "../../UI_KIT/Molecules/Button.molecule";
@@ -12,7 +17,7 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 	setVisible,
 	useGetCategoriesQuery,
 	useAddTasksMutation,
-	category
+	category,
 }) => {
 	const datetime = new Date();
 
@@ -36,11 +41,9 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 	const [valueGoal, setValueGoal] = useState("");
 	//const userCategory = useContext(UserCategory);
 
-	useEffect(()=>{
-		
+	useEffect(() => {
 		setValueCategory(`${category}`);
-		
-	},[category]);
+	}, [category]);
 	const [addTask] = useAddTasksMutation();
 
 	const { data, isLoading } = useGetCategoriesQuery(userId);
@@ -64,9 +67,7 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 	//alert(data);
 
 	return (
-		<S.modal_base
-		display={visible ? "flex" : "none" }
-		>
+		<S.modal_base display={visible ? "flex" : "none"}>
 			<S.modal_window>
 				<S.modal_title>
 					<p>Добавить новую задачу</p>
@@ -96,7 +97,6 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 							value={valueCategory}
 							onChange={(e) => setValueCategory(e.target.value)}
 						>
-
 							{data.map((user: any) => {
 								return (
 									<option
@@ -136,7 +136,6 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 							<option value="2">Обычный</option>
 							<option value="3">Неважный</option>
 						</select>
-
 					</div>
 				</S.modal_parameters>
 				<S.modal_buttons>
@@ -144,19 +143,30 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 						text="Отменить"
 						color="#F05454"
 						icon={false}
-						onClick={() => setVisible(false)}
+						onClick={() => {
+							setVisible(false);
+							setValueGoal("");
+						}}
 					/>
 					<div>
 						<Button
 							text="Сохранить как шаблон"
 							color="#29A19C"
 							icon={false}
+							onClick={() => {
+								handleAddTask();
+								setVisible(false);
+							}}
 						/>
 						<Button
 							text="Добавить"
 							color="#29A19C"
 							icon={false}
-							onClick={() => {handleAddTask();setVisible(false);setValueGoal("");}}
+							onClick={() => {
+								handleAddTask();
+								setVisible(false);
+								setValueGoal("");
+							}}
 						/>
 					</div>
 				</S.modal_buttons>

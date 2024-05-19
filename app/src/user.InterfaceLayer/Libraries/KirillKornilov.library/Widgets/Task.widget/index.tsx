@@ -115,6 +115,7 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 									text={task["goal"]}
 									completed={task["is_completed"]}
 									handleToggle={() => handleToggle(task["id"])}
+									
 								/>
 							);
 					})}
