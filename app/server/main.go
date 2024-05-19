@@ -892,6 +892,16 @@ func DeleteCategoriesById(ctgrys *[]Category, category_id int) {
 	}
 }
 
+// func DeleteTaskByIdInCategory(tsks *[]Task, category_id int) {
+// 	fmt.Println("tsksDo...", tsks)
+// 	for i := 0; i < len(*tsks); i++ {
+// 		if (*tsks)[i].CategoryID == category_id {
+// 			(*tsks) = append((*tsks)[:i], (*tsks)[i+1:]...)
+// 		}
+// 	}
+// 	fmt.Println("tsksPosle...", tsks)
+// }
+
 func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Accept", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -907,179 +917,13 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("category_id...", category_id)
 
 	if category_id > 4 {
+		//DeleteTaskByIdInCategory(&tsks, category_id)
 		DeleteCategoriesById(&ctgry, category_id)
 
 		json.NewEncoder(w).Encode(category_id)
 	}
 
 }
-
-// func GetUserByInfo(username, password string) User {
-
-// 	// for i := 0; i < len(users); i++ {
-// 	// 	if users[i].Email == logInfo.Email && users[i].Password == logInfo.Password {
-// 	// 		return true
-// 	// 	}
-// 	// }
-
-// 	// return false
-
-// 	for i := 0; i < len(users); i++ {
-// 		if users[i].Email == username && users[i].Password == password {
-// 			return users[i]
-// 		}
-// 	}
-
-// 	return User{}
-
-// }
-// func verifyUserPass(username, password string) bool {
-// 	// wantPass, hasUser := usersPasswords[username]
-// 	// if !hasUser {
-// 	// 	return false
-// 	// }
-// 	// if cmperr := bcrypt.CompareHashAndPassword(wantPass, []byte(password)); cmperr == nil {
-// 	// 	return true
-// 	// }
-// 	// return false
-
-// 	// user, hasUser := GetUserByInfo(username)
-// 	// if !hasUser {
-// 	// 	return false
-// 	// }
-// 	// return false
-// 	for i := 0; i < len(users); i++ {
-// 		if users[i].Email == username && users[i].Password == password {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-
-// }
-
-// func LoginAuth(w http.ResponseWriter, req *http.Request) {
-// 	w.Header().Set("Accept", "application/json")
-// 	w.Header().Set("Access-Control-Allow-Origin", "*")
-// 	w.Header().Set("Access-Control-Allow-Methods", "GET")
-// 	fmt.Fprintf(w, "FFFFF\n")
-// 	// var logInfo Auth
-// 	// json.NewDecoder(req.Body).Decode(&logInfo)
-// 	// if err := json.NewDecoder(req.Body).Decode(&logInfo); err != nil {
-// 	// 	w.WriteHeader(http.StatusBadRequest)
-// 	// 	return
-// 	// }
-
-// 	params := mux.Vars(req)
-
-// 	user_name := params["user_name"]
-
-// 	user_pwd := params["user_pwd"]
-
-// 	//	json.NewEncoder(w).Encode(GetTasksById(tsks, user_id, category_id))
-
-// 	//555555555555555555555
-// 	//user, pass, ok := req.BasicAuth()
-// 	//user:= req[user_name]
-// 	if verifyUserPass(user_name, user_pwd) {
-// 		fmt.Fprintf(w, "You get to see the secret\n")
-
-// 		usertemp := GetUserByInfo(user_name, user_pwd)
-// 		json.NewEncoder(w).Encode(usertemp)
-// 	} else {
-// 		w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
-// 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-// 	}
-// 	json.NewEncoder(w).Encode("usertemp")
-// }
-
-// func PostAuth(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Accept", "application/json")
-// 	w.Header().Set("Access-Control-Allow-Origin", "*")
-// 	w.Header().Set("Access-Control-Allow-Methods", "POST")
-
-// 	var logInfo Auth
-// 	json.NewDecoder(r.Body).Decode(&logInfo)
-// 	if err := json.NewDecoder(r.Body).Decode(&logInfo); err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-
-// }
-
-// func (o *Cook) Create(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Println("Create")
-// 	var body struct {
-// 		Image    string `json:"image"`
-// 		Email    string `json:"email"`
-// 		Password string `json:"password"`
-// 		NickName string `json:"nickname"`
-// 	}
-
-// 	// type User struct {
-// 	// 	ID        int    `json:"id"`
-// 	// 	Name      string `json:"name"`
-// 	// 	Avatar    string `json:"avatar"`
-// 	// 	Email     string `json:"email"`
-// 	// 	Password  string `json:"-"`
-// 	// 	IsPremium bool   `json:"is_premium"`
-// 	// }
-
-// 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	// users := User{
-// 	// 	Image:    body.Image,
-// 	// 	Email:    body.Email,
-// 	// 	Password: body.Password,
-// 	// 	NickName: body.NickName,
-// 	// }
-
-// 	// err := o.Repo.Insert(users)
-// 	// if err != nil {
-// 	// 	fmt.Println("failed to insert", err)
-// 	// 	w.WriteHeader(http.StatusInternalServerError)
-// 	// 	return
-// 	// }
-
-// 	res, err := json.Marshal(users)
-// 	if err != nil {
-// 		fmt.Println("failed to marshal", err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	w.Write(res)
-// 	w.WriteHeader(http.StatusCreated)
-// }
-
-// var users = []User{
-// 	{
-// 		ID:        1,
-// 		Name:      "Emily",
-// 		Avatar:    "avatar.png",
-// 		Email:     "emily25@gmail.com",
-// 		Password:  "rlytoughpass",
-// 		IsPremium: false,
-// 	},
-// 	{
-// 		ID:        2,
-// 		Name:      "William",
-// 		Avatar:    "icon",
-// 		Email:     "will2live@gmail.com",
-// 		Password:  "uselesspassword",
-// 		IsPremium: true,
-// 	},
-// }
-
-// var ctgry = []Category{
-// 	{
-// 		ID:     1,
-// 		UserID: 1,
-// 		Name:   "Дом",
-// 	},
 
 func NewUserId(ctgrys []User) int {
 	new := 0
@@ -1107,13 +951,6 @@ func PostFFFAuth(w http.ResponseWriter, r *http.Request) {
 	user := GetUserByInfo(logInfo)
 
 	fmt.Println("user---", user)
-	//json.NewEncoder(w).Encode(user)
-
-	// if err := json.NewEncoder(w).Encode(user); err != nil {
-	// 	fmt.Println("failed to marshal:", err)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
 
 	res, err := json.Marshal(user)
 	if err != nil {
@@ -1128,53 +965,11 @@ func PostFFFAuth(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// for i := 0; i < len(users); i++ {
-// 	if users[i].Email == logInfo.Email && users[i].Password == logInfo.Password {
-// 		return users[i]
-// 	}
-// }
-
-// return User{}
-
-// json.NewDecoder(r.Body).Decode(&logInfo)
-// fmt.Println("logInfo---", logInfo)
-// user := GetUserByInfo(logInfo)
-
-// w.Header().Set("Accept", "application/json")
-// w.Header().Set("Access-Control-Allow-Origin", "*")
-// w.Header().Set("Access-Control-Allow-Methods", "POST")
-
-// var tsk Task
-// json.NewDecoder(r.Body).Decode(&tsk)
-// tsk.ID = NewTaskId(tsks)
-// fmt.Println("PostTask...%d", tsk)
-// params := mux.Vars(r)
-
-// user_id, err := strconv.Atoi(params["user_id"])
-
-// if err != nil {
-// 	panic(err)
-// }
-
-// category_id, err := strconv.Atoi(params["category_id"])
-
-// if err != nil {
-// 	panic(err)
-// }
-
-// tsk.UserID = user_id
-// tsk.CategoryID = category_id
-
-// PostTaskByIds(&tsks, tsk)
-
-// json.NewEncoder(w).Encode(tsk)
-
 func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Accept", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 
-	fmt.Println("usersStart---____________________%d", users)
 	var ONenctgry Auth
 
 	var TempUser User
@@ -1182,24 +977,6 @@ func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("User---", ONenctgry)
 	TempUser.ID = NewUserId(users)
 
-	//	params := mux.Vars(r)
-
-	//user_email := params["email"]
-
-	//TempUser.Email = user_email
-
-	//user_pwd := params["password"]
-
-	//TempUser.Password = user_pwd
-
-	// 	{
-	// 		ID:        1,
-	// 		Name:      "Emily",
-	// 		Avatar:    "avatar.png",
-	// 		Email:     "emily25@gmail.com",
-	// 		Password:  "rlytoughpass",
-	// 		IsPremium: false,
-	// 	},
 	TempUser.Email = ONenctgry.Email
 	TempUser.Password = ONenctgry.Password
 	TempUser.Name = "fff"
@@ -1207,68 +984,11 @@ func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
 	TempUser.IsPremium = false
 
 	PostUserById(&users, TempUser)
-	fmt.Println("usersUDP--- %d", users)
 
 	fmt.Println("res---", TempUser)
 	json.NewEncoder(w).Encode(TempUser)
 
 }
-
-//____________________________________________________
-//func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
-
-// w.Header().Set("Accept", "application/json")
-// w.Header().Set("Access-Control-Allow-Origin", "*")
-// w.Header().Set("Access-Control-Allow-Methods", "POST")
-
-// var nctgry Category
-// json.NewDecoder(r.Body).Decode(&nctgry)
-// nctgry.ID = NewCategoryId(ctgry)
-
-// params := mux.Vars(r)
-
-// user_id, err := strconv.Atoi(params["user_id"])
-
-// if err != nil {
-// 	panic(err)
-// }
-
-// nctgry.UserID = user_id
-
-// PostCategoryById(&ctgry, nctgry)
-
-// json.NewEncoder(w).Encode(nctgry)
-
-// w.Header().Set("Accept", "application/json")
-// w.Header().Set("Access-Control-Allow-Origin", "*")
-// w.Header().Set("Access-Control-Allow-Methods", "POST")
-
-// var logInfo Auth
-// json.NewDecoder(r.Body).Decode(&logInfo)
-// fmt.Println("logInfo---", logInfo)
-// user := GetUserByInfo(logInfo)
-
-// fmt.Println("user---", user)
-//json.NewEncoder(w).Encode(user)
-
-// if err := json.NewEncoder(w).Encode(user); err != nil {
-// 	fmt.Println("failed to marshal:", err)
-// 	w.WriteHeader(http.StatusInternalServerError)
-// 	return
-// }
-
-// 	res, err := json.Marshal(user)
-// 	if err != nil {
-// 		fmt.Println("failed to marshal", err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	fmt.Println("res---", res)
-
-// 	w.Write(res)
-
-// }
 
 func GetUserByInfo(logInfo Auth) User {
 	for i := 0; i < len(users); i++ {
@@ -1290,13 +1010,6 @@ func PostAuth(w http.ResponseWriter, r *http.Request) {
 	user := GetUserByInfo(logInfo)
 
 	fmt.Println("user---", user)
-	//json.NewEncoder(w).Encode(user)
-
-	// if err := json.NewEncoder(w).Encode(user); err != nil {
-	// 	fmt.Println("failed to marshal:", err)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
 
 	res, err := json.Marshal(user)
 	if err != nil {

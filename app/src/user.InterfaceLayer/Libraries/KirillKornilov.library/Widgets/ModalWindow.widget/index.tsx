@@ -156,7 +156,7 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 							text="Добавить"
 							color="#29A19C"
 							icon={false}
-							onClick={() => {handleAddTask();setVisible(false);}}
+							onClick={() => {handleAddTask();setVisible(false);setValueGoal("");}}
 						/>
 					</div>
 				</S.modal_buttons>

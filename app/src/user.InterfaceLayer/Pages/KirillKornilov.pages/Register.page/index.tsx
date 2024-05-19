@@ -108,7 +108,7 @@ const RegisterPage: FC = () => {
 					/>
 					<Button
 						onClick={() => onClickHandler(valueEmail, valuePass, valuePassTemp)}
-						text="Войти"
+						text="Регистрация"
 						color="#29A19C"
 						icon={false}
 					/>
