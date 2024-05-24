@@ -562,11 +562,17 @@ func TogglePremium(w http.ResponseWriter, r *http.Request) {
 
 	user_id, err := strconv.Atoi(params["user_id"])
 
+	statement, err := db.Prepare(`UPDATE ` + "`user`" + ` SET is_premium = ? WHERE id = ?`)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(1, user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	TogglePremiumById(&users, user_id)
 	json.NewEncoder(w).Encode(user_id)
 }
 
