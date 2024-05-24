@@ -925,7 +925,20 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	json.NewEncoder(w).Encode(GetCategoriesById(ctgry, user_id))
+	categories := []Category{}
+	rows, err := db.Query(`SELECT * FROM`+"`category`"+`WHERE user_id = ?`, user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	for rows.Next() {
+		category := Category{}
+		rows.Scan(&category.ID, &category.UserID, &category.Name)
+		categories = append(categories, category)
+	}
+
+	json.NewEncoder(w).Encode(categories)
 }
 
 // Everything related for posting categories
@@ -953,7 +966,6 @@ func PostCategory(w http.ResponseWriter, r *http.Request) {
 
 	var nctgry Category
 	json.NewDecoder(r.Body).Decode(&nctgry)
-	nctgry.ID = NewCategoryId(ctgry)
 
 	params := mux.Vars(r)
 
@@ -965,8 +977,22 @@ func PostCategory(w http.ResponseWriter, r *http.Request) {
 
 	nctgry.UserID = user_id
 
-	PostCategoryById(&ctgry, nctgry)
-
+	statement, err := db.Prepare("INSERT INTO `category` (user_id, name) VALUES (?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	res, err := statement.Exec(user_id, nctgry.Name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	nctgry.ID = int(id)
 	json.NewEncoder(w).Encode(nctgry)
 }
 
@@ -1004,10 +1030,15 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("category_id...", category_id)
 
-	if category_id > 4 {
-		//DeleteTaskByIdInCategory(&tsks, category_id)
-		DeleteCategoriesById(&ctgry, category_id)
+	statement, err := db.Prepare("DELETE FROM `category` WHERE id = ?")
+	if err != nil {
+		fmt.Println(err);
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement.Exec(category_id)
 
+	if category_id > 4 {
 		json.NewEncoder(w).Encode(category_id)
 	}
 
