@@ -521,16 +521,21 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	id, err := strconv.Atoi(params["user_id"])
-
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	user, err := GetUserById(users, id)
-
+	user := User{}
+	userRow, err := db.Query(`SELECT * FROM `+"`user`"+` WHERE id = ?`, id)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+	for userRow.Next() {
+		userRow.Scan(&user.ID, &user.Name, &user.Avatar, &user.Email, &user.Password, &user.IsPremium)
+	}
+	fmt.Println(user)
 
 	json.NewEncoder(w).Encode(user)
 }
@@ -1049,12 +1054,40 @@ func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
 	var TempUser User
 	json.NewDecoder(r.Body).Decode(&ONenctgry)
 	fmt.Println("User---", ONenctgry)
-	TempUser.ID = NewUserId(users)
+	statement, err := db.Prepare("INSERT INTO `user` (name, avatar, email, password, is_premium) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	userResult, err := statement.Exec("f", "f", ONenctgry.Email, ONenctgry.Password, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := userResult.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement, err = db.Prepare("INSERT INTO `category` (user_id, name) VALUES (?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	basicCategories := []string{"Дом", "Семья", "Работа", "Спорт"}
+	for i := 0; i < len(basicCategories); i++ {
+		_, err = statement.Exec(id, basicCategories[i])
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	TempUser.ID = int(id)
 
 	TempUser.Email = ONenctgry.Email
 	TempUser.Password = ONenctgry.Password
-	TempUser.Name = "fff"
-	TempUser.Avatar = "fff"
+	TempUser.Name = ""
+	TempUser.Avatar = ""
 	TempUser.IsPremium = false
 
 	PostUserById(&users, TempUser)
