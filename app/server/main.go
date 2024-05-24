@@ -641,7 +641,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tasks := []Task{}
-	rows, err := db.Query(`SELECT * FROM`+"`task`"+`WHERE category_id = ? AND user_id = ?`, user_id, category_id)
+	rows, err := db.Query(`SELECT * FROM`+"`task`"+`WHERE category_id = ? AND user_id = ?`, category_id, user_id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -777,7 +777,7 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	task, err := db.Query(`SELECT is_completed FROM ` + "`task` WHERE id = ?", task_id)
+	task, err := db.Query(`SELECT is_completed FROM `+"`task` WHERE id = ?", task_id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -1101,6 +1101,14 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	statement.Exec(category_id)
+
+	statement, err = db.Prepare("DELETE FROM `task` WHERE category_id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement.Exec(category_id)
+
 }
 
 func NewUserId(ctgrys []User) int {

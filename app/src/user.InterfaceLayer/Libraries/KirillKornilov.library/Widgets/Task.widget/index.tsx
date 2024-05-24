@@ -57,6 +57,8 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 		WinPrint?.focus();
 		WinPrint?.print();
 		WinPrint?.close();
+		//eslint-disable-next-line no-console
+		//console.log(elem);
 	};
 
 	return (
@@ -64,7 +66,22 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 			<CardDataOptions
 				title={t("activeTask")}
 				callback={
-					(event) => printingTask(event.target.closest("article"))
+					//	(event) => printingTask(event.target.closest("article"))
+					(event) => {
+						//printingTask(event.target.getElementsByClassName("needPrint"));
+						let temp = event.target
+							.closest("article")
+							.getElementsByClassName("needPrint");
+						temp = Array.from(temp);
+						temp = temp.map((node) => node.cloneNode(true));
+						const div = document.createElement("div");
+						div.append(...temp);
+						//eslint-disable-next-line no-console
+						console.log(temp);
+						//eslint-disable-next-line no-console
+						console.log(div);
+						printingTask(div);
+					}
 					//event?.target.print()
 					// 	() => {
 					// 	// eslint-disable-next-line no-console
@@ -97,7 +114,21 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 			<CardDataOptions
 				title={t("completedTask")}
 				callback={
-					(event) => printingTask(event.target.closest("article"))
+					(event) => {
+						let temp = event.target
+							.closest("article")
+							.getElementsByClassName("needPrint");
+						temp = Array.from(temp);
+						temp = temp.map((node) => node.cloneNode(true));
+						const div = document.createElement("div");
+						div.append(...temp);
+						//eslint-disable-next-line no-console
+						console.log(temp);
+						//eslint-disable-next-line no-console
+						console.log(div);
+						printingTask(div);
+					}
+					//(event) => printingTask(event.target.getElementsByClassName("needPrint"))
 					//event?.target.print()
 					// 	() => {
 					// 	// eslint-disable-next-line no-console
@@ -115,7 +146,6 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 									text={task["goal"]}
 									completed={task["is_completed"]}
 									handleToggle={() => handleToggle(task["id"])}
-									
 								/>
 							);
 					})}

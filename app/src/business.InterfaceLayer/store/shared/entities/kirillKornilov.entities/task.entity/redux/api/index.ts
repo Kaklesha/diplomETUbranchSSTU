@@ -100,7 +100,7 @@ export const goodsApi = createApi({
 				method: "DELETE",
 			}),
 
-			invalidatesTags: ["Category"],
+			invalidatesTags: ["Category", "Task"],
 		}),
 		postAuth: build.mutation({
 			query: (body) => ({

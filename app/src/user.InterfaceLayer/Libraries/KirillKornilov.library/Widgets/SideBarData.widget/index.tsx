@@ -51,7 +51,7 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 				<S.data_name>{t("sidebar.categories")}</S.data_name>
 
 				<S.data_items>
-					<div
+					{/* <div
 						key={1}
 						onClick={() => setCategory(1)}
 					>
@@ -94,7 +94,7 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 							icon={Icons.Sport}
 							active={userCategory == 4 ? true : false}
 						/>
-					</div>
+					</div> */}
 
 					{data.map((user: any) => {
 						if (user["id"] <= 4) return;
