@@ -443,7 +443,7 @@ func InitDB(db *sql.DB) error {
 		id INTEGER PRIMARY KEY,
 		category_id INTEGER,
 		user_id INTEGER,
-		goal TEXT
+		goal TEXT,
 		is_completed INTEGER,
 		deadline TEXT,
 		priority INTEGER)`)
@@ -640,7 +640,22 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	json.NewEncoder(w).Encode(GetTasksById(tsks, user_id, category_id))
+	tasks := []Task{}
+	rows, err := db.Query(`SELECT * FROM`+"`task`"+`WHERE category_id = ? AND user_id = ?`, user_id, category_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	for rows.Next() {
+		task := Task{}
+		var deadline string
+		rows.Scan(&task.ID, &task.CategoryID, &task.UserID, &task.Goal, &task.IsCompleted, &deadline, &task.Priority)
+		task.Deadline, _ = time.Parse("2006-01-02 15:04:05 -0700 MST", deadline)
+		tasks = append(tasks, task)
+	}
+
+	json.NewEncoder(w).Encode(tasks)
 }
 
 // Everything related for posting task
@@ -668,7 +683,6 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 
 	var tsk Task
 	json.NewDecoder(r.Body).Decode(&tsk)
-	tsk.ID = NewTaskId(tsks)
 	fmt.Println("PostTask...%d", tsk)
 	params := mux.Vars(r)
 
@@ -687,7 +701,22 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 	tsk.UserID = user_id
 	tsk.CategoryID = category_id
 
-	PostTaskByIds(&tsks, tsk)
+	statement, err := db.Prepare("INSERT INTO `task` (category_id, user_id, goal, is_completed, deadline, priority) VALUES (?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	res, err := statement.Exec(tsk.CategoryID, tsk.UserID, tsk.Goal, tsk.IsCompleted, tsk.Deadline.String(), tsk.Priority)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	tsk.ID = int(id)
 
 	json.NewEncoder(w).Encode(tsk)
 }
@@ -715,7 +744,13 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	DeleteTaskById(&tsks, task_id)
+	statement, err := db.Prepare("DELETE FROM `task` WHERE id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement.Exec(task_id)
+
 	json.NewEncoder(w).Encode(task_id)
 }
 
@@ -740,6 +775,27 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(err)
+	}
+
+	task, err := db.Query(`SELECT is_completed FROM ` + "`task` WHERE id = ?", task_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	is_completed := false
+	for task.Next() {
+		task.Scan(&is_completed)
+	}
+
+	statement, err := db.Prepare(`UPDATE ` + "`task`" + ` SET is_completed = ? WHERE id = ?`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(!is_completed, task_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	ToggleTaskById(&tsks, task_id)
@@ -785,7 +841,16 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 	tsk.ID = task_id
 	tsk.CategoryID = category_id
 
-	EditTaskById(&tsks, tsk, task_id)
+	statement, err := db.Prepare(`UPDATE ` + "`task`" + ` SET goal = ?, is_completed = ?, deadline = ?, priority = ? WHERE id = ? AND category_id = ?`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(tsk.Goal, tsk.IsCompleted, tsk.Deadline.String(), tsk.Priority, task_id, category_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(task_id)
 }
@@ -1032,16 +1097,10 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 
 	statement, err := db.Prepare("DELETE FROM `category` WHERE id = ?")
 	if err != nil {
-		fmt.Println(err);
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	statement.Exec(category_id)
-
-	if category_id > 4 {
-		json.NewEncoder(w).Encode(category_id)
-	}
-
 }
 
 func NewUserId(ctgrys []User) int {
