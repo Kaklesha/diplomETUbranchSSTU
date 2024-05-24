@@ -535,7 +535,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	for userRow.Next() {
 		userRow.Scan(&user.ID, &user.Name, &user.Avatar, &user.Email, &user.Password, &user.IsPremium)
 	}
-	fmt.Println(user)
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	json.NewEncoder(w).Encode(user)
 }
@@ -1059,7 +1062,7 @@ func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	userResult, err := statement.Exec("f", "f", ONenctgry.Email, ONenctgry.Password, 0)
+	userResult, err := statement.Exec("", "", ONenctgry.Email, ONenctgry.Password, 0)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
