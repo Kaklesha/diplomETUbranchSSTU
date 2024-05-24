@@ -1117,21 +1117,25 @@ func PostAuth(w http.ResponseWriter, r *http.Request) {
 	var logInfo Auth
 	json.NewDecoder(r.Body).Decode(&logInfo)
 	fmt.Println("logInfo---", logInfo)
-	user := GetUserByInfo(logInfo)
 
-	fmt.Println("user---", user)
-
-	res, err := json.Marshal(user)
+	user := User{}
+	rows, err := db.Query(`SELECT * FROM`+"`user`"+`WHERE email = ? AND password = ?`, logInfo.Email, logInfo.Password)
 	if err != nil {
-		fmt.Println("failed to marshal", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Println("res---", res)
+	for rows.Next() {
+		rows.Scan(&user.ID, &user.Name, &user.Avatar, &user.Email, &user.Password, &user.IsPremium)
+	}
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-	w.Write(res)
+	fmt.Println("user---", user)
 
+	json.NewEncoder(w).Encode(user)
 }
 
 func Router() *mux.Router {
