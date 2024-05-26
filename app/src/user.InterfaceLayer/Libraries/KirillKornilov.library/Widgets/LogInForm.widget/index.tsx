@@ -98,7 +98,7 @@ export const LogInForm: FC<ILogInFormType> = () => {
 				/>
 
 				<p>
-					Ещё нет аккаунта? <Link to="/kirillKornilov/register">регистрация / Sign Up</Link>
+					Ещё нет аккаунта? <br/><Link to="/kirillKornilov/register">Регистрация / Sign Up</Link>
 				</p>
 			
 			</S.wrapper>
