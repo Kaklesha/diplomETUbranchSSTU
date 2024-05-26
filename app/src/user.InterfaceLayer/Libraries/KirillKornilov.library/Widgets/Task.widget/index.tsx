@@ -75,19 +75,16 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 						temp = Array.from(temp);
 						temp = temp.map((node) => node.cloneNode(true));
 						const div = document.createElement("div");
-						div.append(...temp);
+						const headering = document.createElement("h2");
+						headering.textContent="Активные / Active ";
+						div.append(headering,...temp);
 						//eslint-disable-next-line no-console
 						console.log(temp);
 						//eslint-disable-next-line no-console
 						console.log(div);
 						printingTask(div);
 					}
-					//event?.target.print()
-					// 	() => {
-					// 	// eslint-disable-next-line no-console
-					// 	//console.log(event?.target);
-					// 	//() => window.print()
-					// }
+			
 				}
 			>
 				<div className="column-card">
@@ -121,7 +118,9 @@ export const TaskWidget: FC<TaskWidgetType> = ({
 						temp = Array.from(temp);
 						temp = temp.map((node) => node.cloneNode(true));
 						const div = document.createElement("div");
-						div.append(...temp);
+						const headering = document.createElement("h2");
+						headering.textContent="Завершённые / Completed ";
+						div.append(headering,...temp);
 						//eslint-disable-next-line no-console
 						console.log(temp);
 						//eslint-disable-next-line no-console
