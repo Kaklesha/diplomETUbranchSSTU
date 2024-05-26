@@ -40,7 +40,7 @@
 import styled from "styled-components";
 
 export const data_name =styled.h2`
-margin: 0 0 20px 0;
+
     color: #29A19C;
     font-size: 24px;
     font-weight: 600;
@@ -53,22 +53,19 @@ export const data_items =styled.div`
 `;
 export const side_bar_box =styled.div`
 background-color: #FFFFFF;
-    position:flex;
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-sizing: border-box;
+   
     //box-shadow: 0px 10px 25px 0px rgba(29, 52, 54, 0.08);
-    width: min(300px);
-    height: 100vh;
+    //width: min(300px);
+    height: 100%;
     top: 0;
     bottom: 0;
-    padding: 20px 0 20px 20px;
+   // padding: 20px 0 20px 20px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    @media  (max-width: 868px) {
-        display: none
-      }
+    // @media  (max-width: 768px) {
+    //     display: none
+    //   }
 `;
 export const exit =styled.div`
     height: 100%;

@@ -23,8 +23,8 @@ interface ILogInFormType {
 export const LogInForm: FC<ILogInFormType> = () => {
 	const navigate: NavigateFunction = useNavigate();
 	//const navigate = useNavigate();
-	const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
-	const [valuePass, setValuePass] = useState("rlytoughpass");
+	const [valueEmail, setValueEmail] = useState("@gmail.com");
+	const [valuePass, setValuePass] = useState("");
 
 	//const [postAuth, result] = usePostAuthMutation();
 	const headers = {

@@ -1,36 +1,30 @@
 /* eslint-disable max-lines */
 import styled from "styled-components";
 
+export const modal_title = styled.div``;
+export const modal_task_name = styled.div``;
+export const modal_parameters = styled.div``;
+export const modal_buttons = styled.div``;
+export const open_button = styled.span``;
 
-
-
-export const modal_title = styled.div`
+export const modal_base = styled.div<{ display: string }>`
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	position: fixed;
+	background-color: rgba(0, 0, 0, 0.205);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+	display: ${(props) => props.display};
 `;
-export const modal_task_name = styled.div`
-`;
-export const modal_parameters = styled.div`
-`;
-export const modal_button = styled.div`
-`;
-export const modal_category = styled.div`
-`;
-
-export const modal_base = styled.div<{display:string}>`
-top: 0;
-bottom: 0;
-left: 0;
-right: 0;
-position: fixed;
-background-color: rgba(0, 0, 0, 0.205);
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 1;
-display:${props=>props.display};
-`; 
 
 export const modal_window = styled.div`
-width: clamp(290px,90%,400px);
+     width: clamp(290px,90%,500px);
+     
+    //height: clamn(700px,90%,80vh)
     padding: 20px;
     border-radius: 10px;
     background: #FFF;
@@ -87,22 +81,55 @@ width: clamp(290px,90%,400px);
         }
     }
 
-    & ${modal_button}{
+    & ${modal_buttons}{
+            flex: 1;
         display: flex;
         justify-content: space-between;
+        align-items: end;
+
+        & div {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
         }
-    & ${modal_category}{
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+`;
+
+export const button = styled.button`
+	padding: 10px 25px;
+`;
+
+export const sd_container = styled.div`
+	position: relative;
+	float: left;
+
+& ${open_button} {
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    pointer-events: none;
     }
 `;
 
-// export const button = styled.button`
 
-// padding: 10px 25px;
+// .sd-container {
+//     position: relative;
+//     float: left;
+// }
 
-// `;
+// .open-button {
+//     position: absolute;
+//     top: 10px;
+//     right: 18px;
+//     width: 18px;
+//     height: 18px;
+//     background: #fff;
+//     pointer-events: none;
+// }
 
-
-
+// .open-button button {
+//     border: none;
+//     background: transparent;
+// }

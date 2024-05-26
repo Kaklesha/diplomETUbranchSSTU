@@ -149,7 +149,7 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 						}}
 					/>
 					<div>
-						<Button
+						{/* <Button
 							text="Сохранить как шаблон"
 							color="#29A19C"
 							icon={false}
@@ -157,7 +157,7 @@ const ModalWindowWidget: FunctionComponent<ModalWindowWidgetType> = ({
 								handleAddTask();
 								setVisible(false);
 							}}
-						/>
+						/> */}
 						<Button
 							text="Добавить"
 							color="#29A19C"

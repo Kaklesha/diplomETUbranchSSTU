@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import "../i18n.widget/i18n";
 import { removeLocalStorage } from "business.InterfaceLayer/store/services/utils/localstoreUser/localstore";
 
-import Logo from "../../UI_KIT/Molecules/Logo.molecule";
+//import Logo from "../../UI_KIT/Molecules/Logo.molecule";
 import { Icons } from "../../UI_KIT/Atoms/Atom1/icons";
 import SidebarDataItem from "../../UI_KIT/Molecules/SidebarDataItem.molecule";
 import * as S from "./styled";
@@ -16,7 +16,7 @@ import { UserCategory } from "../Main.widget";
 
 //const userId = useContext(UserIdContext);
 //const SidebarDataWidget= () => {
-const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
+const BurgerMenuWidget: FunctionComponent<SidebarDataWidgetType> = ({
 	useGetCategoriesQuery,
 	setCategory,
 	setVisibleCatalog,
@@ -46,58 +46,15 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 
 	return (
 		<S.side_bar_box>
-			<Logo />
+			{/* <Logo /> */}
 			<>
 				<S.data_name>{t("sidebar.categories")}</S.data_name>
 
 				<S.data_items>
-					{/* <div
-						key={1}
-						onClick={() => setCategory(1)}
-					>
-						<SidebarDataItem
-							text={t("sidebar.home")}
-							color="#000"
-							icon={Icons.House}
-							active={userCategory == 1 ? true : false}
-						/>
-					</div>
-					<div
-						key={2}
-						onClick={() => setCategory(2)}
-					>
-						<SidebarDataItem
-							text={t("sidebar.family")}
-							color="#000"
-							icon={Icons.Family}
-							active={userCategory == 2 ? true : false}
-						/>
-					</div>
-					<div
-						key={3}
-						onClick={() => setCategory(3)}
-					>
-						<SidebarDataItem
-							text={t("sidebar.job")}
-							color="#000"
-							icon={Icons.Job}
-							active={userCategory == 3 ? true : false}
-						/>
-					</div>
-					<div
-						key={4}
-						onClick={() => setCategory(4)}
-					>
-						<SidebarDataItem
-							text={t("sidebar.sport")}
-							color="#000"
-							icon={Icons.Sport}
-							active={userCategory == 4 ? true : false}
-						/>
-					</div> */}
+				
 
 					{data.map((user: any) => {
-						// if (user["id"] <= 4) return;
+						if (user["id"] <= 4) return;
 
 						return (
 							<div
@@ -146,4 +103,4 @@ const SidebarDataWidget: FunctionComponent<SidebarDataWidgetType> = ({
 	);
 };
 
-export default SidebarDataWidget;
+export default BurgerMenuWidget;

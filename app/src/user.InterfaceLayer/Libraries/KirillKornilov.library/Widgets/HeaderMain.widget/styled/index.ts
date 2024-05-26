@@ -3,12 +3,18 @@
 // export default test;
 
 import styled from "styled-components";
+import { device } from "user.InterfaceLayer/Libraries/KirillKornilov.library/constants/breakPoints";
 
 export const main_header =styled.div`
 display: flex;
-    align-items: center;
+    align-items: left;
     justify-content: space-between;
+    gap: 30px;
     margin-bottom: 20px;
+  @media ${device.laptop} {
+        flex-direction: column-reverse;
+      }
+
 `;
 export const user_card =styled.div`
 display: flex;
