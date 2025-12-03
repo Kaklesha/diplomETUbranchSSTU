@@ -17,6 +17,10 @@ const MainPage = lazy(
 const SignPage = lazy(
 	() => import("../../../Pages/KirillKornilov.pages/Sign.page")
 );
+const RegisterPage = lazy(
+	() => import("../../../Pages/KirillKornilov.pages/Register.page")
+);
+
 
 const kirillKornilovRoutesRoutes: RouteObject[] = [
 	{
@@ -39,6 +43,15 @@ const kirillKornilovRoutesRoutes: RouteObject[] = [
 				element: (
 					<Suspense fallback={<Loader />}>
 						<SignPage />
+					</Suspense>
+				),
+				errorElement: <Error />,
+			},	
+			{
+				path: kirillKornilovRoutesPaths.REGISTER,
+				element: (
+					<Suspense fallback={<Loader />}>
+						<RegisterPage />
 					</Suspense>
 				),
 				errorElement: <Error />,

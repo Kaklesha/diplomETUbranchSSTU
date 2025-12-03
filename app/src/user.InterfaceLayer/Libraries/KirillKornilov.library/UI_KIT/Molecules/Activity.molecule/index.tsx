@@ -16,6 +16,8 @@ const Activity:FC<ActivityType> = ({useGetActivityQuery}) => {
     if(isLoading)return <h1>Loading..</h1>;
 
     return (
+        
+
         <S.activity>
             {/* <ActivityCircle title='Создано' number={113} />
             <ActivityCircle title='Завершено' number={97} />

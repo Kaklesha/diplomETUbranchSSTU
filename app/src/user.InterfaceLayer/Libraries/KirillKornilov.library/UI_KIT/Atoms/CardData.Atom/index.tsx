@@ -5,6 +5,7 @@ import "./styled/style.css";
 export interface ICardData {
     title: string,
     children: JSX.Element,
+    callback?(event),
 }
 
 const CardData: FC<ICardData> = ({title, children}) => {

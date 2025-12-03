@@ -12,6 +12,9 @@ const MainLayout: FC = () => (
 		<div>
 			<Link to={"/kirillKornilov/sign"}> </Link>
 		</div>
+		<div>
+			<Link to={"/kirillKornilov/register"}> </Link>
+		</div>
 		<Outlet />
 	</div>
 );

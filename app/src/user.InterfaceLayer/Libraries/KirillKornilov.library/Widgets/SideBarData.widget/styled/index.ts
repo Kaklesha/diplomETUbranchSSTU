@@ -52,12 +52,13 @@ export const data_items =styled.div`
     gap: 20px;
 `;
 export const side_bar_box =styled.div`
-    position:fixed;
+background-color: #FFFFFF;
+    position:flex;
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
-    box-shadow: 0px 10px 25px 0px rgba(29, 52, 54, 0.08);
-    width: 232px;
+    //box-shadow: 0px 10px 25px 0px rgba(29, 52, 54, 0.08);
+    width: min(300px);
     height: 100vh;
     top: 0;
     bottom: 0;
@@ -65,7 +66,9 @@ export const side_bar_box =styled.div`
     display: flex;
     flex-direction: column;
     gap: 30px;
-
+    @media  (max-width: 868px) {
+        display: none
+      }
 `;
 export const exit =styled.div`
     height: 100%;

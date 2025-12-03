@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type User struct {
@@ -20,9 +22,9 @@ type User struct {
 	Password  string `json:"-"`
 	IsPremium bool   `json:"is_premium"`
 }
-type Auth struct{
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+type Auth struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Category struct {
@@ -55,8 +57,6 @@ type Observation struct {
 type Fact struct {
 	Fact string `json:"fact"`
 }
-
-//golangDateTime := time.Now().Format("2006-01-02 15:04:05")
 
 var users = []User{
 	{
@@ -413,6 +413,93 @@ var tsks = []Task{
 
 var acitvity = []Activity{}
 
+// Database
+
+var db, _ = sql.Open("sqlite3", "./db.db")
+
+func InitDB(db *sql.DB) error {
+	statement, err := db.Prepare(`CREATE TABLE IF NOT EXISTS` + "`user`" + `(
+		id INTEGER PRIMARY KEY, 
+		name TEXT,
+		avatar TEXT,
+		email TEXT,
+		password TEXT,
+		is_premium INTEGER)`)
+	if err != nil {
+		return err
+	}
+	statement.Exec()
+
+	statement, err = db.Prepare(`CREATE TABLE IF NOT EXISTS` + "`category`" + `(
+		id INTEGER PRIMARY KEY,
+		user_id INTEGER,
+		name TEXT)`)
+	if err != nil {
+		return err
+	}
+	statement.Exec()
+
+	statement, err = db.Prepare(`CREATE TABLE IF NOT EXISTS` + "`task`" + `(
+		id INTEGER PRIMARY KEY,
+		category_id INTEGER,
+		user_id INTEGER,
+		goal TEXT,
+		is_completed INTEGER,
+		deadline TEXT,
+		priority INTEGER)`)
+	if err != nil {
+		return err
+	}
+	statement.Exec()
+
+	statement, err = db.Prepare(`CREATE TABLE IF NOT EXISTS` + "`fact`" + `(
+		id INTEGER PRIMARY KEY,
+		fact TEXT)`)
+	if err != nil {
+		return err
+	}
+	statement.Exec()
+	return nil
+}
+
+func DBFillFacts(db *sql.DB) error {
+	facts := []string{
+		"Задачи могут быть выполнены в любое время, даже если они не назначены на определенный день.",
+		"Задачи должны быть конкретными и измеримыми, чтобы можно было оценить прогресс и достижение целей.",
+		"Задачи должны быть распределены по приоритетам, чтобы не перегружать себя и не терять фокус на самых важных задачах.",
+		"Задачи должны быть разбиты на более мелкие подзадачи, чтобы облегчить их выполнение и повысить эффективность.",
+		"Задачи должны быть записаны в календарь или список задач, чтобы отслеживать их выполнение и не забывать о них.",
+		"Задачи должны быть связаны с целями и стратегиями, чтобы убедиться, что они соответствуют общей картине и помогают достичь желаемого результата.",
+		"Задачи должны быть реалистичными и достижимыми, чтобы не создавать ложных ожиданий и не разочаровываться в процессе выполнения.",
+		"Задачи должны быть адаптированы к индивидуальным потребностям и возможностям, чтобы каждый мог найти свой подход и успех.",
+		"Задачи должны включать в себя отдых и перерывы, чтобы сохранять энергию и фокусироваться на работе.",
+		"Задачи должны поощряться и мотивировать, чтобы поддерживать интерес и энтузиазм в работе.",
+		"Задачи должны быть гибкими и адаптивными, чтобы учитывать изменения в условиях и задачах.",
+		"Задачи должны быть признаны и оценены, чтобы понимать свой прогресс и успехи.",
+		"Задачи должны иметь конкретные сроки и дедлайны, чтобы контролировать время и не откладывать работу на потом.",
+		"Задачи должны помогать развивать навыки и умения, чтобы улучшать свои компетенции и профессиональные качества.",
+		"Задачи должны способствовать улучшению коммуникации и сотрудничества, чтобы работать в команде и достигать общих целей.",
+		"Задачи должны учитывать культурные и социальные аспекты, чтобы уважать традиции и обычаи разных групп.",
+		"Задачи должны быть направлены на улучшение качества жизни и благополучия, чтобы помогать людям и делать мир лучше.",
+		"Человек, который спит 8 часов в день, по статистике, имеет более высокий уровень энергии и концентрации, чем тот, кто спит меньше.",
+		"Человек, который занимается спортом 3 раза в неделю, по статистике, имеет более здоровое тело и мозг, чем тот, кто не занимается спортом.",
+		"Человек, который читает 30 минут в день, по статистике, лучше запоминает информацию, чем тот, кто не читает.",
+		"Человек, который медитирует 10 минут в день, по статистике, более спокоен и устойчив к стрессу, чем тот, кто не медитирует.",
+		"Человек, который разговаривает с друзьями и близкими по телефону или в мессенджерах, по статистике, больше общается и поддерживает социальные связи, чем тот, кто общается только через электронную почту.",
+	}
+	statement, err := db.Prepare("INSERT OR IGNORE INTO `fact` (id, fact) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(facts); i++ {
+		_, err = statement.Exec(i+1, facts[i])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Everything related to getting user by id
 
 func GetUserById(usrs []User, id int) (User, error) {
@@ -434,15 +521,23 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	id, err := strconv.Atoi(params["user_id"])
-
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	user, err := GetUserById(users, id)
-
+	user := User{}
+	userRow, err := db.Query(`SELECT * FROM `+"`user`"+` WHERE id = ?`, id)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	for userRow.Next() {
+		userRow.Scan(&user.ID, &user.Name, &user.Avatar, &user.Email, &user.Password, &user.IsPremium)
+	}
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	json.NewEncoder(w).Encode(user)
@@ -467,11 +562,17 @@ func TogglePremium(w http.ResponseWriter, r *http.Request) {
 
 	user_id, err := strconv.Atoi(params["user_id"])
 
+	statement, err := db.Prepare(`UPDATE ` + "`user`" + ` SET is_premium = ? WHERE id = ?`)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(1, user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	TogglePremiumById(&users, user_id)
 	json.NewEncoder(w).Encode(user_id)
 }
 
@@ -539,7 +640,22 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	json.NewEncoder(w).Encode(GetTasksById(tsks, user_id, category_id))
+	tasks := []Task{}
+	rows, err := db.Query(`SELECT * FROM`+"`task`"+`WHERE category_id = ? AND user_id = ?`, category_id, user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	for rows.Next() {
+		task := Task{}
+		var deadline string
+		rows.Scan(&task.ID, &task.CategoryID, &task.UserID, &task.Goal, &task.IsCompleted, &deadline, &task.Priority)
+		task.Deadline, _ = time.Parse("2006-01-02 15:04:05 -0700 MST", deadline)
+		tasks = append(tasks, task)
+	}
+
+	json.NewEncoder(w).Encode(tasks)
 }
 
 // Everything related for posting task
@@ -560,15 +676,14 @@ func NewTaskId(tsks []Task) int {
 }
 
 func PostTask(w http.ResponseWriter, r *http.Request) {
-	
+
 	w.Header().Set("Accept", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 
 	var tsk Task
 	json.NewDecoder(r.Body).Decode(&tsk)
-	tsk.ID = NewTaskId(tsks)
-fmt.Println("PostTask...%d",tsk )
+	fmt.Println("PostTask...%d", tsk)
 	params := mux.Vars(r)
 
 	user_id, err := strconv.Atoi(params["user_id"])
@@ -586,7 +701,22 @@ fmt.Println("PostTask...%d",tsk )
 	tsk.UserID = user_id
 	tsk.CategoryID = category_id
 
-	PostTaskByIds(&tsks, tsk)
+	statement, err := db.Prepare("INSERT INTO `task` (category_id, user_id, goal, is_completed, deadline, priority) VALUES (?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	res, err := statement.Exec(tsk.CategoryID, tsk.UserID, tsk.Goal, tsk.IsCompleted, tsk.Deadline.String(), tsk.Priority)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	tsk.ID = int(id)
 
 	json.NewEncoder(w).Encode(tsk)
 }
@@ -614,7 +744,13 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	DeleteTaskById(&tsks, task_id)
+	statement, err := db.Prepare("DELETE FROM `task` WHERE id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement.Exec(task_id)
+
 	json.NewEncoder(w).Encode(task_id)
 }
 
@@ -633,8 +769,6 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 
-
-
 	params := mux.Vars(r)
 
 	task_id, err := strconv.Atoi(params["task_id"])
@@ -643,8 +777,29 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	task, err := db.Query(`SELECT is_completed FROM `+"`task` WHERE id = ?", task_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	is_completed := false
+	for task.Next() {
+		task.Scan(&is_completed)
+	}
+
+	statement, err := db.Prepare(`UPDATE ` + "`task`" + ` SET is_completed = ? WHERE id = ?`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(!is_completed, task_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	ToggleTaskById(&tsks, task_id)
-	fmt.Println("Patch $d",task_id)
+	fmt.Println("Patch $d", task_id)
 	json.NewEncoder(w).Encode(task_id)
 }
 
@@ -653,7 +808,7 @@ func ToggleTask(w http.ResponseWriter, r *http.Request) {
 func EditTaskById(tsks *[]Task, tsk Task, task_id int) {
 	for i := 0; i < len(*tsks); i++ {
 		if (*tsks)[i].ID == task_id {
-			tsk.UserID=(*tsks)[i].UserID
+			tsk.UserID = (*tsks)[i].UserID
 			(*tsks)[i] = tsk
 		}
 	}
@@ -671,7 +826,7 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(tsk)
 
 	params := mux.Vars(r)
-	fmt.Println("Edit...%",params["task_id"],params["category_id"])
+	fmt.Println("Edit...%", params["task_id"], params["category_id"])
 	task_id, err := strconv.Atoi(params["task_id"])
 
 	if err != nil {
@@ -683,10 +838,19 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	tsk.ID=task_id
-	tsk.CategoryID=category_id
+	tsk.ID = task_id
+	tsk.CategoryID = category_id
 
-	EditTaskById(&tsks, tsk, task_id)
+	statement, err := db.Prepare(`UPDATE ` + "`task`" + ` SET goal = ?, is_completed = ?, deadline = ?, priority = ? WHERE id = ? AND category_id = ?`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = statement.Exec(tsk.Goal, tsk.IsCompleted, tsk.Deadline.String(), tsk.Priority, task_id, category_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(task_id)
 }
@@ -711,8 +875,14 @@ func GetActivity(w http.ResponseWriter, r *http.Request) {
 	// if err != nil {
 	// 	panic(err)
 	// }
+	var active = Activity{}
 
-	json.NewEncoder(w).Encode(acitvity[user_id-1])
+	if user_id > 2 {
+		json.NewEncoder(w).Encode(active)
+	} else {
+		json.NewEncoder(w).Encode(acitvity[user_id-1])
+	}
+
 }
 
 func GetFact(w http.ResponseWriter, r *http.Request) {
@@ -720,33 +890,20 @@ func GetFact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET")
 
-	facts := []string{
-		"Задачи могут быть выполнены в любое время, даже если они не назначены на определенный день.",
-		"Задачи должны быть конкретными и измеримыми, чтобы можно было оценить прогресс и достижение целей.",
-		"Задачи должны быть распределены по приоритетам, чтобы не перегружать себя и не терять фокус на самых важных задачах.",
-		"Задачи должны быть разбиты на более мелкие подзадачи, чтобы облегчить их выполнение и повысить эффективность.",
-		"Задачи должны быть записаны в календарь или список задач, чтобы отслеживать их выполнение и не забывать о них.",
-		"Задачи должны быть связаны с целями и стратегиями, чтобы убедиться, что они соответствуют общей картине и помогают достичь желаемого результата.",
-		"Задачи должны быть реалистичными и достижимыми, чтобы не создавать ложных ожиданий и не разочаровываться в процессе выполнения.",
-		"Задачи должны быть адаптированы к индивидуальным потребностям и возможностям, чтобы каждый мог найти свой подход и успех.",
-		"Задачи должны включать в себя отдых и перерывы, чтобы сохранять энергию и фокусироваться на работе.",
-		"Задачи должны поощряться и мотивировать, чтобы поддерживать интерес и энтузиазм в работе.",
-		"Задачи должны быть гибкими и адаптивными, чтобы учитывать изменения в условиях и задачах.",
-		"Задачи должны быть признаны и оценены, чтобы понимать свой прогресс и успехи.",
-		"Задачи должны иметь конкретные сроки и дедлайны, чтобы контролировать время и не откладывать работу на потом.",
-		"Задачи должны помогать развивать навыки и умения, чтобы улучшать свои компетенции и профессиональные качества.",
-		"Задачи должны способствовать улучшению коммуникации и сотрудничества, чтобы работать в команде и достигать общих целей.",
-		"Задачи должны учитывать культурные и социальные аспекты, чтобы уважать традиции и обычаи разных групп.",
-		"Задачи должны быть направлены на улучшение качества жизни и благополучия, чтобы помогать людям и делать мир лучше.",
-		"Человек, который спит 8 часов в день, по статистике, имеет более высокий уровень энергии и концентрации, чем тот, кто спит меньше.",
-		"Человек, который занимается спортом 3 раза в неделю, по статистике, имеет более здоровое тело и мозг, чем тот, кто не занимается спортом.",
-		"Человек, который читает 30 минут в день, по статистике, лучше запоминает информацию, чем тот, кто не читает.",
-		"Человек, который медитирует 10 минут в день, по статистике, более спокоен и устойчив к стрессу, чем тот, кто не медитирует.",
-		"Человек, который разговаривает с друзьями и близкими по телефону или в мессенджерах, по статистике, больше общается и поддерживает социальные связи, чем тот, кто общается только через электронную почту.",
+	facts := []Fact{}
+	factsRows, err := db.Query(`SELECT fact FROM ` + "`fact`")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	for factsRows.Next() {
+		fact := Fact{}
+		factsRows.Scan(&fact.Fact)
+		facts = append(facts, fact)
 	}
 
 	fact := Fact{
-		Fact: facts[rand.Intn(len(facts))],
+		Fact: facts[rand.Intn(len(facts))].Fact,
 	}
 
 	json.NewEncoder(w).Encode(fact)
@@ -780,23 +937,32 @@ func GetObservation(w http.ResponseWriter, r *http.Request) {
 	completedMax := 0
 	completedMaxIndex := 0
 
-	for i := 0; i < len(acitvity[user_id-1].Created); i++ {
-		if acitvity[user_id-1].Created[i] > createdMax {
-			createdMax = acitvity[user_id-1].Created[i]
-			createdMaxIndex = i
+	if user_id > 2 {
+		obsr := Observation{
+			Created:   "Больше всего задач вы создаете в " + "Понедельник",
+			Completed: "Больше всего задач вы завершаете в " + "Понедельник",
 		}
-		if acitvity[user_id-1].Completed[i] > completedMax {
-			completedMax = acitvity[user_id-1].Completed[i]
-			completedMaxIndex = i
+		json.NewEncoder(w).Encode(obsr)
+	} else {
+		for i := 0; i < len(acitvity[user_id-1].Created); i++ {
+			if acitvity[user_id-1].Created[i] > createdMax {
+				createdMax = acitvity[user_id-1].Created[i]
+				createdMaxIndex = i
+			}
+			if acitvity[user_id-1].Completed[i] > completedMax {
+				completedMax = acitvity[user_id-1].Completed[i]
+				completedMaxIndex = i
+			}
 		}
+
+		obsr := Observation{
+			Created:   "Больше всего задач вы создаете в " + days[createdMaxIndex],
+			Completed: "Больше всего задач вы завершаете в " + days[completedMaxIndex],
+		}
+
+		json.NewEncoder(w).Encode(obsr)
 	}
 
-	obsr := Observation{
-		Created:   "Больше всего задач вы создаете в " + days[createdMaxIndex],
-		Completed: "Больше всего задач вы завершаете в " + days[completedMaxIndex],
-	}
-
-	json.NewEncoder(w).Encode(obsr)
 }
 
 // Everything related for getting categories
@@ -824,7 +990,20 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	json.NewEncoder(w).Encode(GetCategoriesById(ctgry, user_id))
+	categories := []Category{}
+	rows, err := db.Query(`SELECT * FROM`+"`category`"+`WHERE user_id = ?`, user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	for rows.Next() {
+		category := Category{}
+		rows.Scan(&category.ID, &category.UserID, &category.Name)
+		categories = append(categories, category)
+	}
+
+	json.NewEncoder(w).Encode(categories)
 }
 
 // Everything related for posting categories
@@ -852,7 +1031,6 @@ func PostCategory(w http.ResponseWriter, r *http.Request) {
 
 	var nctgry Category
 	json.NewDecoder(r.Body).Decode(&nctgry)
-	nctgry.ID = NewCategoryId(ctgry)
 
 	params := mux.Vars(r)
 
@@ -864,8 +1042,22 @@ func PostCategory(w http.ResponseWriter, r *http.Request) {
 
 	nctgry.UserID = user_id
 
-	PostCategoryById(&ctgry, nctgry)
-
+	statement, err := db.Prepare("INSERT INTO `category` (user_id, name) VALUES (?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	res, err := statement.Exec(user_id, nctgry.Name)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	nctgry.ID = int(id)
 	json.NewEncoder(w).Encode(nctgry)
 }
 
@@ -879,6 +1071,16 @@ func DeleteCategoriesById(ctgrys *[]Category, category_id int) {
 	}
 }
 
+// func DeleteTaskByIdInCategory(tsks *[]Task, category_id int) {
+// 	fmt.Println("tsksDo...", tsks)
+// 	for i := 0; i < len(*tsks); i++ {
+// 		if (*tsks)[i].CategoryID == category_id {
+// 			(*tsks) = append((*tsks)[:i], (*tsks)[i+1:]...)
+// 		}
+// 	}
+// 	fmt.Println("tsksPosle...", tsks)
+// }
+
 func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Accept", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -888,46 +1090,169 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 
 	category_id, err := strconv.Atoi(params["category_id"])
 
-
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("category_id...",category_id)
+	fmt.Println("category_id...", category_id)
 
-	if category_id > 4 {
-		DeleteCategoriesById(&ctgry, category_id)
-
-		json.NewEncoder(w).Encode(category_id)
+	statement, err := db.Prepare("DELETE FROM `category` WHERE id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+	statement.Exec(category_id)
+
+	statement, err = db.Prepare("DELETE FROM `task` WHERE category_id = ?")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement.Exec(category_id)
 
 }
-func GetUserByInfo(logInfo Auth) (User) {
-    for i := 0; i < len(users); i++ {
-        if users[i].Email == logInfo.Email && users[i].Password == logInfo.Password {
-            return users[i]
-        }
-    }
-    return User{}
+
+func NewUserId(ctgrys []User) int {
+	new := 0
+	for i := 0; i < len(ctgrys); i++ {
+		if ctgrys[i].ID > new {
+			new = ctgrys[i].ID
+		}
+	}
+	new++
+	return new
 }
 
-	func PostAuth(w http.ResponseWriter, r *http.Request){
-		w.Header().Set("Accept", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST")
-		
-		var logInfo Auth
-		json.NewDecoder(r.Body).Decode(&logInfo)
-		fmt.Println("logInfo---",logInfo)
-		user :=GetUserByInfo(logInfo)
-		fmt.Println("user---",user)
-		json.NewEncoder(w).Encode(user)
+func PostUserById(ctgrys *[]User, ctgry User) {
+	*ctgrys = append(*ctgrys, ctgry)
+}
+
+func PostFFFAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Accept", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
+	var logInfo Auth
+	json.NewDecoder(r.Body).Decode(&logInfo)
+	fmt.Println("logInfo---", logInfo)
+	user := GetUserByInfo(logInfo)
+
+	fmt.Println("user---", user)
+
+	res, err := json.Marshal(user)
+	if err != nil {
+		fmt.Println("failed to marshal", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
+	fmt.Println("res---", res)
+
+	w.Write(res)
+
+}
+
+func RegisterPostAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Accept", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
+	var ONenctgry Auth
+
+	var TempUser User
+	json.NewDecoder(r.Body).Decode(&ONenctgry)
+	fmt.Println("User---", ONenctgry)
+	statement, err := db.Prepare("INSERT INTO `user` (name, avatar, email, password, is_premium) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	userResult, err := statement.Exec("", "", ONenctgry.Email, ONenctgry.Password, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	id, err := userResult.LastInsertId()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	statement, err = db.Prepare("INSERT INTO `category` (user_id, name) VALUES (?, ?)")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	basicCategories := []string{"Дом", "Семья", "Работа", "Спорт"}
+	for i := 0; i < len(basicCategories); i++ {
+		_, err = statement.Exec(id, basicCategories[i])
+	}
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	TempUser.ID = int(id)
+
+	TempUser.Email = ONenctgry.Email
+	TempUser.Password = ONenctgry.Password
+	TempUser.Name = ""
+	TempUser.Avatar = ""
+	TempUser.IsPremium = false
+
+	PostUserById(&users, TempUser)
+
+	fmt.Println("res---", TempUser)
+	json.NewEncoder(w).Encode(TempUser)
+
+}
+
+func GetUserByInfo(logInfo Auth) User {
+	for i := 0; i < len(users); i++ {
+		if users[i].Email == logInfo.Email && users[i].Password == logInfo.Password {
+			return users[i]
+		}
+	}
+
+	return User{}
+}
+func PostAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Accept", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
+	var logInfo Auth
+	json.NewDecoder(r.Body).Decode(&logInfo)
+	fmt.Println("logInfo---", logInfo)
+
+	user := User{}
+	rows, err := db.Query(`SELECT * FROM`+"`user`"+`WHERE email = ? AND password = ?`, logInfo.Email, logInfo.Password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	for rows.Next() {
+		rows.Scan(&user.ID, &user.Name, &user.Avatar, &user.Email, &user.Password, &user.IsPremium)
+	}
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	fmt.Println("user---", user)
+
+	json.NewEncoder(w).Encode(user)
+}
 
 func Router() *mux.Router {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/api/user/{user_id}", GetUser).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/userAuth", PostAuth).Methods("POST", "OPTIONS")
+
+	//router.HandleFunc("/api/userCreate", PostAuth).Methods("POST", "OPTIONS")
+
+	router.HandleFunc("/api/userCreate", RegisterPostAuth).Methods("POST", "OPTIONS")
+	//	router.HandleFunc("/api/userAuth/{user_name}/{user_pwd}", LoginAuth).Methods("GET", "OPTIONS")
+
 	router.HandleFunc("/api/togglePremium/{user_id}", TogglePremium).Methods("PATCH", "OPTIONS") // Testing required
 	router.HandleFunc("/api/editUser/{user_id}", EditUser).Methods("PUT", "OPTIONS")             // Testing required
 
@@ -936,14 +1261,14 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/observation/{user_id}/{category_id}", GetObservation).Methods("GET", "OPTIONS")
 
 	router.HandleFunc("/api/category/{user_id}", GetCategories).Methods("GET", "OPTIONS")
-	router.HandleFunc("/api/category/{user_id}", PostCategory).Methods("POST", "OPTIONS")         // Testing required
+	router.HandleFunc("/api/category/{user_id}", PostCategory).Methods("POST", "OPTIONS")            // Testing required
 	router.HandleFunc("/api/categoryDel/{category_id}", DeleteCategory).Methods("DELETE", "OPTIONS") // Testing required
 
 	router.HandleFunc("/api/task/{user_id}/{category_id}", GetTasks).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/task/{user_id}/{category_id}", PostTask).Methods("POST")
 	router.HandleFunc("/api/task/{task_id}", DeleteTask).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/api/toggleTask/{task_id}", ToggleTask).Methods("POST", "OPTIONS") // Testing required
-	router.HandleFunc("/api/editTask/{category_id}/{task_id}", EditTask).Methods("POST", "OPTIONS")       // Testing required
+	router.HandleFunc("/api/toggleTask/{task_id}", ToggleTask).Methods("POST", "OPTIONS")           // Testing required
+	router.HandleFunc("/api/editTask/{category_id}/{task_id}", EditTask).Methods("POST", "OPTIONS") // Testing required
 	return router
 }
 
@@ -975,8 +1300,24 @@ func main() {
 	acitvity = append(acitvity, Activity{Created: created1, Completed: completed1, Deleted: deleted1})
 	acitvity = append(acitvity, Activity{Created: created2, Completed: completed2, Deleted: deleted2})
 
+	err := InitDB(db)
+	if err != nil {
+		panic(err)
+	}
+
+	err = DBFillFacts(db)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := db.Close(); err != nil {
+			fmt.Println("Failed to close SQLite", err)
+		}
+	}()
+
 	r := Router()
 	fmt.Println("Starting the server on port 9000...")
 
-	log.Fatal(http.ListenAndServe(":9000", r))
+	log.Fatal(http.ListenAndServe("127.0.0.1:9000", r))
 }

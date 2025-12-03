@@ -92,8 +92,6 @@ export const goodsApi = createApi({
 				body,
 			}),
 			invalidatesTags: ["Category"],
-
-
 		}),
 
 		deleteCategory: build.mutation({
@@ -102,7 +100,7 @@ export const goodsApi = createApi({
 				method: "DELETE",
 			}),
 
-			invalidatesTags: ["Category"],
+			invalidatesTags: ["Category", "Task"],
 		}),
 		postAuth: build.mutation({
 			query: (body) => ({
@@ -112,11 +110,32 @@ export const goodsApi = createApi({
 				body,
 				//responseType:"json",
 			}),
-//	router.HandleFunc("/api/userAuth", PostAuth).Methods("POST", "OPTIONS")
-
+			//	router.HandleFunc("/api/userAuth", PostAuth).Methods("POST", "OPTIONS")
 		}),
+		// loginAuth: build.query({
+		// 	query: ({ name, pwd }) => `userAuth/${name}/${category_id}`,
+		// }),
+		// getTodo: build.query<any, Props>({
+		// 	query: ({ authToken, params }) => ({
+		// 		url: url.todo,
+		// 		method: httpMethods.GET,
+		// 		headers: {
+		// 			Authorization: `Bearer ${authToken}`,
+		// 		},
+		// 		params: params,
+		// 		validateStatus,
+		// 	}),
+		// 	providesTags: [`${reducerPaths.todo}TAG`],
+		// 	transformResponse: todoFromDtoServiceArray,
+		// }),
 
-		
+		// loginYAuth: build.query({
+		// 	query: (user) => ({
+		// 		url: "userAuth",
+		// 		method: "GET",
+		// 		body: user, // Body is automatically converted to json with the correct headers
+		// 	}),
+		// }),
 	}),
 });
 
