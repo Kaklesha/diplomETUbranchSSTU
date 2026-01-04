@@ -30,7 +30,7 @@ display:${props=>props.display};
 `; 
 
 export const modal_window = styled.div`
-    width: 350px;
+width: clamp(290px,90%,400px);
     padding: 20px;
     border-radius: 10px;
     background: #FFF;

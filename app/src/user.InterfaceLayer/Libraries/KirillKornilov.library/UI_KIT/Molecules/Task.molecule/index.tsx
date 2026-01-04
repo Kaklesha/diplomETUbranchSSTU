@@ -11,7 +11,7 @@ interface ITask {
 	completed: boolean;
 	handleDeleteTask?: any;
 	handleToggle?: any;
-	onSetTaskEdit?:any;
+	onSetTaskEdit?: any;
 	
 }
 
@@ -37,7 +37,7 @@ const Task: FC<ITask> = ({
 				<CheckBox handleToggle={handleToggle} checked={completed ? true : false} />
 			</S.checkbox_box>
 
-			<p > {text}</p>
+			<p className="needPrint"> {text}</p>
 			<S.btn onClick={onSetTaskEdit}>
 				<Icon
 					width={18}

@@ -1,7 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/app/node_modules
+node_modules
+yarn.lock
+package-lock.json
 /.pnp
 .pnp.js
 
@@ -22,3 +24,6 @@
 /app/npm-debug.log*
 /app/yarn-debug.log*
 /app/yarn-error.log*
+/app/yarn.lock
+/app/package-lock.json
+/app/node_modules

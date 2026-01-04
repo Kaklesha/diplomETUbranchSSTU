@@ -15,6 +15,7 @@ i18n
 		ru:{
 			translation:{
 				sidebar:{
+					logo:"Менеджер заметок",
 					categories:"Категории",
 					home: "Дом",
 					family:"Семья",
@@ -50,6 +51,7 @@ i18n
 		en:{
 			translation:{
 				sidebar:{
+					logo:"Task manager",
 					categories:"Categories",
 					home: "Home",
 					family:"Family",

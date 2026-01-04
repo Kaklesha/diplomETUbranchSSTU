@@ -67,6 +67,13 @@ export const task = styled.div<taskProps>`
         
     `};
 
+    @media print {
+     
+            display: none;
+           
+    }
+
+
     `;
 // color: ${props=>props.color||"white"};
 // .task {

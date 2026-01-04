@@ -1,8 +1,13 @@
-import React, { useState, FC } from "react";
+// eslint-disable-next-line import/order
+import { useState, FC } from "react";
 //import { useNavigate } from "react-router-dom";
 
+//import { usePostAuthMutation } from "business.InterfaceLayer/store/shared/entities/kirillKornilov.entities/task.entity/redux/api";
+
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import Button from "../../UI_KIT/Molecules/Button.molecule";
-import Media from "../../UI_KIT/Atoms/Media.Atom";
 import * as S from "./styled";
 //import "./styled/style.css";
 
@@ -15,24 +20,55 @@ interface ILogInFormType {
 	usePostAuthMutation: any;
 }
 
-export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
+export const LogInForm: FC<ILogInFormType> = () => {
+	const navigate: NavigateFunction = useNavigate();
 	//const navigate = useNavigate();
-	const [valueEmail, setValueEmail] = useState("emily25@gmail.com");
-	const [valuePass, setValuePass] = useState("rlytoughpass");
+	const [valueEmail, setValueEmail] = useState("@gmail.com");
+	const [valuePass, setValuePass] = useState("");
 
-	const [postAuth, result] = usePostAuthMutation();
-
+	//const [postAuth, result] = usePostAuthMutation();
+	const headers = {
+		"Content-Type": "text/plain",
+	};
 	const onClickHandler = async () => {
-		const body = { email: valueEmail, password: valuePass };
-		await postAuth(body);
+		//const body = { email: valueEmail, password: valuePass };
+
+		await axios
+			.post(
+				"http://localhost:9000/api/userAuth",
+				{
+					email: `${valueEmail}`,
+					password: `${valuePass}`,
+				},
+				{ headers }
+			)
+			.then(function (response) {
+				// eslint-disable-next-line no-console
+				console.log(response);
+				if (response.data["id"] !== 0) {
+					localStorage.setItem("user", JSON.stringify(response.data));
+					// eslint-disable-next-line no-console
+					console.log("good");
+					// eslint-disable-next-line no-console
+					console.log(response["id"]);
+				navigate("..", { relative: "path" });
+				window.location.reload();
+				}
+			})
+			.catch(function (error) {
+				// eslint-disable-next-line no-console
+				console.log(error);
+			});
+		//await postAuth(body);
 	};
 
-	// eslint-disable-next-line no-console
-	console.log(`isLoad ${result.isLoading}`);
-	// eslint-disable-next-line no-console
-	console.log(`isData ${result.data}`);
-	// eslint-disable-next-line no-console
-	console.log(result.error);
+	// // eslint-disable-next-line no-console
+	// console.log(`isLoad ${result.isLoading}`);
+	// // eslint-disable-next-line no-console
+	// console.log(`isData ${result.data}`);
+	// // eslint-disable-next-line no-console
+	// console.dir(`isRes ${JSON.stringify(result)}`);
+	// // eslint-disable-next-line no-console
 
 	return (
 		<S.container>
@@ -62,23 +98,9 @@ export const LogInForm: FC<ILogInFormType> = ({ usePostAuthMutation }) => {
 				/>
 
 				<p>
-					Ещё нет аккаунта? <a href="#">Регистрация</a>
+					Ещё нет аккаунта? <br/><Link to="/kirillKornilov/register">Регистрация / Sign Up</Link>
 				</p>
-				<S.division_box>
-					<hr />
-					<p>или</p>
-					<hr />
-				</S.division_box>
-				<S.media_box>
-					<Media
-						logo={require("../../assets/icons/twitter.png")}
-						link="twitter.com"
-					/>
-					<Media
-						logo={require("../../assets/icons/facebook.webp")}
-						link="facebook.com"
-					/>
-				</S.media_box>
+			
 			</S.wrapper>
 		</S.container>
 	);

@@ -28,8 +28,8 @@ display:${props=>props.display};
 `; 
 
 export const modal_window = styled.div`
-    width: 700px;
-    height: 350px;
+width: clamp(290px,90%,700px);
+    // height: 350px;
     padding: 20px;
     border-radius: 10px;
     background: #FFF;
@@ -82,8 +82,11 @@ export const modal_window = styled.div`
             width: 100%
         }
         & input {
-            width: 82%
+            width: 90%
         }
+        @media  (max-width: 500px) {
+            flex-direction: column;
+              }
     }
 
     & ${modal_buttons}{
